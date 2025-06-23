@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Document Generator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: #24292e;
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        opacity: 0.8;
+        font-size: 1.1rem;
+      }
+
+      .content {
+        padding: 30px;
+      }
+
+      .login-section {
+        text-align: center;
+        padding: 50px 20px;
+      }
+
+      .github-btn {
+        background: #24292e;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: background 0.3s;
+        text-decoration: none;
+      }
+
+      .github-btn:hover {
+        background: #1b1f23;
+      }
+
+      .user-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+
+      .repos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .repo-card {
+        background: #f8f9fa;
+        border: 1px solid #e1e4e8;
+        border-radius: 8px;
+        padding: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+      }
+
+      .repo-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .repo-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #0366d6;
+        margin-bottom: 8px;
+      }
+
+      .repo-description {
+        color: #586069;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+      }
+
+      .repo-meta {
+        display: flex;
+        gap: 15px;
+        font-size: 0.85rem;
+        color: #586069;
+      }
+
+      .repo-language {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .language-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 50px;
+        color: #586069;
+      }
+
+      .error {
+        background: #fff5f5;
+        border: 1px solid #fed7d7;
+        color: #c53030;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .logout-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      .file-explorer {
+        margin-top: 20px;
+        border: 1px solid #e1e4e8;
+        border-radius: 8px;
+        background: white;
+      }
+
+      .file-item {
+        padding: 10px 15px;
+        border-bottom: 1px solid #e1e4e8;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .file-item:hover {
+        background: #f8f9fa;
+      }
+
+      .file-item:last-child {
+        border-bottom: none;
+      }
+
+      .file-content {
+        background: #f8f9fa;
+        border: 1px solid #e1e4e8;
+        border-radius: 8px;
+        margin-top: 20px;
+        padding: 20px;
+      }
+
+      .file-content pre {
+        white-space: pre-wrap;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>GitHub Document Generator</h1>
+        <p>
+          Connect your GitHub account to generate documentation from your
+          repositories
+        </p>
+      </div>
+
+      <div class="content">
+        <div id="loginSection" class="login-section">
+          <h2>Connect with GitHub</h2>
+          <p style="margin: 20px 0">
+            Sign in with your GitHub account to access your repositories
+          </p>
+          <a href="/auth/github" class="github-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+              />
+            </svg>
+            Login with GitHub
+          </a>
+        </div>
+
+        <div id="userSection" style="display: none">
+          <div id="userInfo" class="user-info"></div>
+
+          <div id="reposSection">
+            <h2>Your Repositories</h2>
+            <div id="reposGrid" class="repos-grid"></div>
+          </div>
+
+          <div id="fileExplorer" style="display: none">
+            <h2>Repository Contents</h2>
+            <button
+              onclick="goBackToRepos()"
+              style="
+                margin-bottom: 15px;
+                padding: 8px 16px;
+                background: #6c757d;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+              "
+            >
+              ← Back to Repositories
+            </button>
+            <div id="explorerContent"></div>
+          </div>
+
+          <div id="fileViewer" style="display: none">
+            <h2>File Content</h2>
+            <button
+              onclick="goBackToExplorer()"
+              style="
+                margin-bottom: 15px;
+                padding: 8px 16px;
+                background: #6c757d;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+              "
+            >
+              ← Back to Files
+            </button>
+            <div id="fileContent" class="file-content"></div>
+          </div>
+        </div>
+
+        <div id="loadingSection" class="loading" style="display: none">
+          <p>Loading...</p>
+        </div>
+
+        <div id="errorSection" class="error" style="display: none">
+          <p id="errorMessage"></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentUser = null
+      let currentRepo = null
+      let currentPath = ''
+
+      // Language colors
+      const languageColors = {
+        JavaScript: '#f1e05a',
+        Python: '#3572A5',
+        Java: '#b07219',
+        TypeScript: '#2b7489',
+        'C++': '#f34b7d',
+        C: '#555555',
+        'C#': '#239120',
+        PHP: '#4F5D95',
+        Ruby: '#701516',
+        Go: '#00ADD8',
+        Rust: '#dea584',
+        Swift: '#fa7343',
+        Kotlin: '#F18E33',
+        HTML: '#e34c26',
+        CSS: '#563d7c',
+        Shell: '#89e051',
+      }
+
+      function showError(message) {
+        document.getElementById('errorMessage').textContent = message
+        document.getElementById('errorSection').style.display = 'block'
+      }
+
+      function hideError() {
+        document.getElementById('errorSection').style.display = 'none'
+      }
+
+      function showLoading() {
+        document.getElementById('loadingSection').style.display = 'block'
+      }
+
+      function hideLoading() {
+        document.getElementById('loadingSection').style.display = 'none'
+      }
+
+      async function loadRepositories() {
+        if (!currentUser) return
+
+        showLoading()
+        hideError()
+
+        try {
+          const response = await fetch(`/api/repos/${currentUser.id}`)
+          const data = await response.json()
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to load repositories')
+          }
+
+          displayRepositories(data.repos)
+          displayUserInfo(data.user)
+        } catch (error) {
+          console.error('Error loading repositories:', error)
+          showError(error.message)
+        } finally {
+          hideLoading()
+        }
+      }
+
+      function displayUserInfo(user) {
+        const userInfo = document.getElementById('userInfo')
+        userInfo.innerHTML = `
+                <img src="${user.avatar_url}" alt="${
+          user.login
+        }" class="user-avatar">
+                <div>
+                    <h3>${user.name || user.login}</h3>
+                    <p>@${user.login} • ${user.public_repos} repositories</p>
+                </div>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            `
+      }
+
+      function displayRepositories(repos) {
+        const reposGrid = document.getElementById('reposGrid')
+
+        if (repos.length === 0) {
+          reposGrid.innerHTML = '<p>No repositories found.</p>'
+          return
+        }
+
+        reposGrid.innerHTML = repos
+          .map(
+            (repo) => `
+                <div class="repo-card" onclick="exploreRepository('${
+                  repo.full_name
+                }')">
+                    <div class="repo-name">${repo.name}</div>
+                    <div class="repo-description">${
+                      repo.description || 'No description available'
+                    }</div>
+                    <div class="repo-meta">
+                        ${
+                          repo.language
+                            ? `
+                            <div class="repo-language">
+                                <div class="language-dot" style="background-color: ${
+                                  languageColors[repo.language] || '#ccc'
+                                }"></div>
+                                ${repo.language}
+                            </div>
+                        `
+                            : ''
+                        }
+                        <div>${repo.private ? '🔒 Private' : '🌐 Public'}</div>
+                        <div>Updated ${new Date(
+                          repo.updated_at
+                        ).toLocaleDateString()}</div>
+                    </div>
+                </div>
+            `
+          )
+          .join('')
+      }
+
+      async function exploreRepository(fullName) {
+        currentRepo = fullName
+        currentPath = ''
+
+        document.getElementById('reposSection').style.display = 'none'
+        document.getElementById('fileExplorer').style.display = 'block'
+
+        await loadRepositoryContents('')
+      }
+
+      async function loadRepositoryContents(path) {
+        if (!currentUser || !currentRepo) return
+
+        showLoading()
+        hideError()
+
+        try {
+          const [owner, repo] = currentRepo.split('/')
+          const response = await fetch(
+            `/api/repos/${
+              currentUser.id
+            }/${owner}/${repo}/contents?path=${encodeURIComponent(path)}`
+          )
+          const data = await response.json()
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to load repository contents')
+          }
+
+          displayRepositoryContents(data, path)
+          currentPath = path
+        } catch (error) {
+          console.error('Error loading repository contents:', error)
+          showError(error.message)
+        } finally {
+          hideLoading()
+        }
+      }
+
+      function displayRepositoryContents(contents, path) {
+        const explorerContent = document.getElementById('explorerContent')
+
+        let html = `<h3>${currentRepo}${path ? '/' + path : ''}</h3>`
+
+        if (path) {
+          html += `<div class="file-item" onclick="navigateUp()">📁 ..</div>`
+        }
+
+        html += '<div class="file-explorer">'
+
+        // Sort: directories first, then files
+        const sortedContents = contents.sort((a, b) => {
+          if (a.type === 'dir' && b.type === 'file') return -1
+          if (a.type === 'file' && b.type === 'dir') return 1
+          return a.name.localeCompare(b.name)
+        })
+
+        sortedContents.forEach((item) => {
+          const icon = item.type === 'dir' ? '📁' : '📄'
+          const clickHandler =
+            item.type === 'dir'
+              ? `loadRepositoryContents('${path ? path + '/' : ''}${
+                  item.name
+                }')`
+              : `loadFileContent('${path ? path + '/' : ''}${item.name}')`
+
+          html += `<div class="file-item" onclick="${clickHandler}">${icon} ${item.name}</div>`
+        })
+
+        html += '</div>'
+        explorerContent.innerHTML = html
+      }
+
+      async function loadFileContent(filePath) {
+        if (!currentUser || !currentRepo) return
+
+        showLoading()
+        hideError()
+
+        try {
+          const [owner, repo] = currentRepo.split('/')
+          const response = await fetch(
+            `/api/repos/${
+              currentUser.id
+            }/${owner}/${repo}/file?path=${encodeURIComponent(filePath)}`
+          )
+          const data = await response.json()
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to load file content')
+          }
+
+          displayFileContent(data)
+          document.getElementById('fileExplorer').style.display = 'none'
+          document.getElementById('fileViewer').style.display = 'block'
+        } catch (error) {
+          console.error('Error loading file content:', error)
+          showError(error.message)
+        } finally {
+          hideLoading()
+        }
+      }
+
+      function displayFileContent(file) {
+        const fileContent = document.getElementById('fileContent')
+        fileContent.innerHTML = `
+                <h3>${file.name}</h3>
+                <p>Size: ${file.size} bytes</p>
+                <pre><code>${escapeHtml(file.content)}</code></pre>
+            `
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div')
+        div.textContent = text
+        return div.innerHTML
+      }
+
+      function navigateUp() {
+        const pathParts = currentPath.split('/').filter((p) => p)
+        pathParts.pop()
+        const newPath = pathParts.join('/')
+        loadRepositoryContents(newPath)
+      }
+
+      function goBackToRepos() {
+        document.getElementById('fileExplorer').style.display = 'none'
+        document.getElementById('fileViewer').style.display = 'none'
+        document.getElementById('reposSection').style.display = 'block'
+        currentRepo = null
+        currentPath = ''
+      }
+
+      function goBackToExplorer() {
+        document.getElementById('fileViewer').style.display = 'none'
+        document.getElementById('fileExplorer').style.display = 'block'
+      }
+
+      async function logout() {
+        if (!currentUser) return
+
+        try {
+          await fetch(`/api/logout/${currentUser.id}`, { method: 'POST' })
+        } catch (error) {
+          console.error('Logout error:', error)
+        }
+
+        currentUser = null
+        document.getElementById('userSection').style.display = 'none'
+        document.getElementById('loginSection').style.display = 'block'
+
+        // Clear URL parameters
+        window.history.replaceState({}, document.title, '/')
+      }
+
+      // Check URL parameters on page load
+      window.addEventListener('load', () => {
+        const urlParams = new URLSearchParams(window.location.search)
+
+        if (urlParams.get('success') === 'true') {
+          const userId = urlParams.get('userId')
+          const username = urlParams.get('username')
+
+          if (userId && username) {
+            currentUser = { id: parseInt(userId), login: username }
+            document.getElementById('loginSection').style.display = 'none'
+            document.getElementById('userSection').style.display = 'block'
+            loadRepositories()
+          }
+        } else if (urlParams.get('error')) {
+          showError('Authentication failed. Please try again.')
+        }
+      })
+    </script>
+  </body>
+</html>
