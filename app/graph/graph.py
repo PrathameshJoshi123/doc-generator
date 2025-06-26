@@ -12,10 +12,13 @@ from app.graph.nodes.output_node import output_node
 
 def decide_doc_summary_path(state: DocGenState) -> str:
     if state.preferences.add_inline_comments and state.preferences.generate_summary:
+        print("docstring_and_summary")
         return "docstring_and_summary"
     elif state.preferences.add_inline_comments:
+        print("add_docstrings")
         return "add_docstrings"
     elif state.preferences.generate_summary:
+        print("summarize_node")
         return "summarize_node"
     else:
         # If neither is selected, skip to readme generation

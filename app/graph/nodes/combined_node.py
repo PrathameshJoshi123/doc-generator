@@ -2,24 +2,54 @@ import os
 from app.models.state import DocGenState
 from app.utils.mistral import get_llm_response
 
+def get_comment_syntax(lang: str) -> dict:
+    """
+    Returns appropriate documentation comment syntax based on the file extension.
+    """
+    lang = lang.lower()
+
+    if lang in ["py", "python"]:
+        return {"start": "\"\"\"", "end": "\"\"\""}
+    elif lang in ["js", "ts", "java", "c", "cpp"]:
+        return {"start": "/**", "end": "*/"}
+    elif lang in ["go"]:
+        return {"start": "//", "end": ""}
+    elif lang in ["rb", "swift"]:
+        return {"start": "///", "end": ""}
+    elif lang in ["css"]:
+        return {"start": "/*", "end": "*/"}
+    elif lang in ["html", "htm"]:
+        return {"start": "<!--", "end": "-->"}
+    else:
+        return {"start": "//", "end": ""}
+
+
 
 def build_combined_prompt(file_path: str, entities: dict, entity_type: str) -> str:
     lang = os.path.splitext(file_path)[1].lstrip(".")
+    comment_style = get_comment_syntax(lang)
+
     prompt = f"""You are a professional {lang} developer and technical writer.
 
 For each {entity_type} listed below:
-1. Add a concise, professional documentation comment above it.
-2. Provide a 1–2 line technical summary of its purpose.
+1. Add a concise, professional **documentation comment** above the code using the correct syntax for {lang}.
+2. Then, on a new line, write a **brief summary** of the code functionality in the form of a comment (use {lang}-style comment).
 
-⚠️ Return ONLY the modified {lang} code blocks with added documentation.
-After each block, include a line: ### Summary: <summary>
+⚠️ Rules:
+- Do NOT wrap the output in markdown, triple backticks, or any format.
+- ONLY return the modified code blocks with comments.
+- Use correct indentation and line formatting as per the language.
+- Do NOT include any explanations or additional commentary outside the code.
 
-Do not include explanations, markdown, or triple backticks.
+Example of summary format (in {lang}):
+{comment_style['start']} This method does XYZ... {comment_style['end']}
 """
+
     for code, name in entities.items():
         prompt += f"\n// --- {entity_type.capitalize()}: {name} ---\n{code}\n"
 
     return prompt
+
 
 
 def extract_summaries_from_response(response: str) -> list:

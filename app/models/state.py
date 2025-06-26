@@ -4,10 +4,10 @@ from typing import Optional, Union, Dict, Any
 from pydantic import BaseModel
 
 class DocGenPreferences(BaseModel):
-    add_inline_comments: bool = True
-    generate_summary: bool = True
-    generate_readme: bool = True
-    visualize_structure: bool = True
+    add_inline_comments: bool 
+    generate_summary: bool 
+    generate_readme: bool
+    visualize_structure: bool
 
 class DocGenState(BaseModel):
     #Source of input
@@ -29,9 +29,4 @@ class DocGenState(BaseModel):
     readme_summaries: Optional[Dict[str, str]] = None
 
     #User coustomization
-    preferences: Optional[DocGenPreferences] = DocGenPreferences(
-        add_inline_comments = True,
-        generate_summary= True,
-        generate_readme = True,
-        visualize_structure= True,
-    )
+    preferences: Optional[DocGenPreferences] 
