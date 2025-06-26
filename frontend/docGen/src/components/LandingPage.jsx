@@ -104,6 +104,33 @@ const LandingPage = () => {
     },
   ];
 
+  const howItWorksSteps = [
+    {
+      icon: <Link className="w-8 h-8 text-cyan-400" />,
+      title: "Enter Repository URL",
+      description:
+        "Paste the GitHub repository URL or upload a ZIP file of your project.",
+    },
+    {
+      icon: <Zap className="w-8 h-8 text-blue-400" />,
+      title: "Generate Documentation",
+      description:
+        "Click the Generate Docs button to analyze your code and create documentation.",
+    },
+    {
+      icon: <Eye className="w-8 h-8 text-purple-400" />,
+      title: "Review & Preview",
+      description:
+        "View the generated markdown, live preview, and project structure instantly.",
+    },
+    {
+      icon: <Download className="w-8 h-8 text-green-400" />,
+      title: "Export & Download",
+      description:
+        "Export your documentation or download the enhanced project as a ZIP file.",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Navigation */}
@@ -359,66 +386,36 @@ const LandingPage = () => {
       {/* How it Works Section */}
       <section
         id="how-it-works"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-cyan-50 via-blue-50 to-white dark:from-gray-900 dark:via-blue-900/40 dark:to-gray-800"
       >
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-              How It Works
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-cyan-900/60 via-blue-900/40 to-gray-900/80 rounded-3xl shadow-2xl border border-cyan-500/20 p-10">
+            <h2 className="text-3xl font-extrabold text-white mb-8 text-center bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+              How it works
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Generate professional documentation in three simple steps
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-12">
-            {[
-              {
-                step: "1",
-                title: "Paste Repository URL",
-                description:
-                  "Enter any public GitHub repository URL. Our system will fetch and analyze the codebase automatically.",
-                icon: <Link className="w-8 h-8" />,
-                color: "bg-blue-600",
-              },
-              {
-                step: "2",
-                title: "AI Analysis & Generation",
-                description:
-                  "Our AI examines code structure, functions, and patterns to generate comprehensive documentation.",
-                icon: <Layers className="w-8 h-8" />,
-                color: "bg-green-600",
-              },
-              {
-                step: "3",
-                title: "Review & Export",
-                description:
-                  "View code and docs side-by-side, make adjustments, then download your markdown documentation.",
-                icon: <Download className="w-8 h-8" />,
-                color: "bg-purple-600",
-              },
-            ].map((item, index) => (
-              <div key={index} className="text-center relative">
+            <div className="grid md:grid-cols-4 gap-8">
+              {howItWorksSteps.map((step, idx) => (
                 <div
-                  className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${item.color} text-white text-xl font-bold mb-6 shadow-lg`}
+                  key={step.title}
+                  className="flex flex-col items-center text-center group transition-transform duration-300 hover:scale-105"
                 >
-                  {item.icon}
+                  <div className="relative mb-4">
+                    <div className="absolute -top-3 -left-3 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-full w-10 h-10 flex items-center justify-center shadow-lg shadow-cyan-500/20 z-10">
+                      <span className="text-xl font-bold text-white">
+                        {idx + 1}
+                      </span>
+                    </div>
+                    <div className="bg-gray-900/80 border border-cyan-500/20 rounded-full p-5 flex items-center justify-center shadow-lg group-hover:shadow-cyan-500/30 transition-all duration-300">
+                      {step.icon}
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-cyan-200 mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-300 text-sm">{step.description}</p>
                 </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm font-bold text-gray-700 dark:text-gray-200">
-                  {item.step}
-                </div>
-                <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  {item.description}
-                </p>
-
-                {index < 2 && (
-                  <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gray-300 dark:bg-gray-700"></div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
