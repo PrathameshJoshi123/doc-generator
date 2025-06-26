@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import BlurText from "../reactBits/BlurText";
 
+
 const LandingPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);

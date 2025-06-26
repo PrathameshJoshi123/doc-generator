@@ -25,6 +25,7 @@ import {
   File,
   Folder,
 } from "lucide-react";
+import mermaid from "mermaid";
 
 const GeneratePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,6 +40,7 @@ const GeneratePage = () => {
   const [activeTab, setActiveTab] = useState("editor");
   const [projectStructure, setProjectStructure] = useState("");
   const [injectComments, setInjectComments] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,6 +52,36 @@ const GeneratePage = () => {
   const handleNavigate = () => {
     navigate("/");
   };
+
+  const handleDownloadZip = async () => {
+    try {
+      const response = await fetch(`https://lf32z74w-8000.inc1.devtunnels.ms${downloadUrl}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/x-zip-compressed", // optional
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+  
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "your-file.zip"); // specify the filename
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+  
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download ZIP:", error);
+    }
+  };
+  
 
   // Replace your mermaid diagram with this structure:
   const verticalProjectStructure = () => `
@@ -88,27 +120,48 @@ graph TD
       const formData = new FormData();
 
       if (repoUrl) {
-        formData.append("repoUrl", repoUrl);
+        formData.append("input_type", "github");
+        formData.append("input_data", repoUrl);
       }
 
       if (uploadedFile) {
-        formData.append("file", uploadedFile);
+        formData.append("input_type", "zip");
+        formData.append("zip_file", uploadedFile);
       }
 
-      const response = await fetch("https://your-api.com/generate-docs", {
-        method: "POST",
-        body: formData,
-      });
-
+      var response;
+      let result;
+      if (!injectComments) {
+        response = await fetch(
+          "https://lf32z74w-8000.inc1.devtunnels.ms/generate",
+          {
+            method: "POST",
+            body: formData,
+          }
+        
+        );
+        result = await response.json();
+      } else {
+        response = await fetch(
+          "https://lf32z74w-8000.inc1.devtunnels.ms/generate-and-download",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        result = await response.json();
+        console.log("DOwnload url wala", result)
+        setDownloadUrl(result.download_url)
+      }
+      
       if (!response.ok) {
         throw new Error("Failed to generate docs");
       }
 
-      const result = await response.json(); // Assuming API returns JSON
-
-      // Optional: Use response to update markdown content or project structure
-      setMarkdownContent(result.markdown || generateMarkdownContent());
-      setProjectStructure(result.structure || verticalProjectStructure());
+      console.log("Output", result.visuals.folder_structure_mermaid);
+      // Use new backend response structure
+      setMarkdownContent(result.readme || generateMarkdownContent());
+      setProjectStructure(result.visuals.folder_structure_mermaid || verticalProjectStructure());
       setHasGenerated(true);
     } catch (error) {
       console.error("Error generating docs:", error);
@@ -119,7 +172,7 @@ graph TD
 
   const handleFileUpload = (event) => {
     const file = event.target.files?.[0];
-    if (file && file.type === "application/zip") {
+    if (file && file.type === "application/x-zip-compressed") {
       setUploadedFile(file);
     }
   };
@@ -738,9 +791,7 @@ The documentation generator uses:
             <div className="w-full flex justify-center mt-10 mb-8">
               <button
                 className="flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-lg font-semibold shadow-lg hover:scale-105 hover:shadow-cyan-500/30 transition-all duration-200 border border-cyan-500/30"
-                onClick={() => {
-                  /* TODO: implement ZIP download logic */
-                }}
+                onClick={handleDownloadZip}
               >
                 <Folder className="w-5 h-5" />
                 Download Full Project ZIP (with Comments)
