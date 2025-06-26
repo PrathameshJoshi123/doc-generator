@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Orb from "../reactBits/Orb";
+import SpotlightCard from "../reactBits/SpotlightCard";
 import {
   Github,
   FileText,
@@ -21,85 +23,86 @@ import {
   Layers,
   Moon,
   Sun,
-} from 'lucide-react'
+} from "lucide-react";
+import BlurText from "../reactBits/BlurText";
 
 const LandingPage = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [scrollY, setScrollY] = useState(0)
-  const [darkMode, setDarkMode] = useState(false)
-  const navigate = useNavigate()
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const [darkMode, setDarkMode] = useState(false);
+  const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate('/generate')
-  }
+    navigate("/generate");
+  };
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (darkMode) {
-      document.body.classList.add('dark')
+      document.body.classList.add("dark");
     } else {
-      document.body.classList.remove('dark')
+      document.body.classList.remove("dark");
     }
-  }, [darkMode])
+  }, [darkMode]);
 
   const features = [
     {
       icon: <Link className="w-6 h-6" />,
-      title: 'Simple URL Input',
+      title: "Simple URL Input",
       description:
-        'Just paste any public GitHub repository URL and our AI will analyze it instantly.',
+        "Just paste any public GitHub repository URL and our AI will analyze it instantly.",
     },
     {
       icon: <FileText className="w-6 h-6" />,
-      title: 'Smart Documentation',
+      title: "Smart Documentation",
       description:
-        'AI-powered analysis generates comprehensive, structured documentation from your codebase.',
+        "AI-powered analysis generates comprehensive, structured documentation from your codebase.",
     },
     {
       icon: <Eye className="w-6 h-6" />,
-      title: 'Live Preview',
+      title: "Live Preview",
       description:
-        'See your code and generated documentation side-by-side with real-time updates.',
+        "See your code and generated documentation side-by-side with real-time updates.",
     },
     {
       icon: <Download className="w-6 h-6" />,
-      title: 'Export Ready',
+      title: "Export Ready",
       description:
-        'Download beautiful markdown files ready for your README, wiki, or documentation site.',
+        "Download beautiful markdown files ready for your README, wiki, or documentation site.",
     },
-  ]
+  ];
 
   const testimonials = [
     {
-      name: 'Sarah Chen',
-      role: 'Senior Developer',
+      name: "Sarah Chen",
+      role: "Senior Developer",
       content:
-        'This tool saved me hours of documentation work. The AI understands code structure perfectly.',
+        "This tool saved me hours of documentation work. The AI understands code structure perfectly.",
       avatar:
-        'https://images.unsplash.com/photo-1494790108755-2616b9512b2d?w=100&h=100&fit=crop&crop=face',
+        "https://images.unsplash.com/photo-1494790108755-2616b9512b2d?w=100&h=100&fit=crop&crop=face",
     },
     {
-      name: 'Marcus Rodriguez',
-      role: 'Tech Lead',
+      name: "Marcus Rodriguez",
+      role: "Tech Lead",
       content:
-        'The side-by-side view makes it so easy to review and refine the generated documentation.',
+        "The side-by-side view makes it so easy to review and refine the generated documentation.",
       avatar:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
     },
     {
-      name: 'Emily Johnson',
-      role: 'Open Source Maintainer',
+      name: "Emily Johnson",
+      role: "Open Source Maintainer",
       content:
-        'Perfect for open source projects. My contributors finally understand the codebase!',
+        "Perfect for open source projects. My contributors finally understand the codebase!",
       avatar:
-        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -107,8 +110,8 @@ const LandingPage = () => {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrollY > 50
-            ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-lg border-b border-gray-200 dark:border-gray-800'
-            : 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm'
+            ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-lg border-b border-gray-200 dark:border-gray-800"
+            : "bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
         }`}
         aria-label="Main navigation"
       >
@@ -231,33 +234,58 @@ const LandingPage = () => {
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gray-900 dark:text-white leading-tight">
             Transform GitHub Code into
             <br />
-            <span className="text-blue-600 dark:text-blue-400">
-              Beautiful Documentation
+            <span>
+              <BlurText
+                text="Beautiful Documentation!"
+                delay={150}
+                animateBy="words"
+                direction="top"
+                className="justify-center text-blue-600 dark:text-blue-400"
+              />
             </span>
           </h1>
 
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-3 max-w-3xl mx-auto leading-relaxed">
             Simply paste a GitHub repository URL and watch as our AI creates
             comprehensive, professional documentation. View code and docs
             side-by-side, then export as markdown.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <button
-              className="group bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 flex items-center space-x-3 shadow-lg"
-              onClick={handleNavigate}
+          <div
+            className="flex flex-col items-center justify-center mb-8 md:flex-row md:justify-center md:gap-16"
+            style={{ width: "100%" }}
+          >
+            <div
+              style={{ width: 320, height: 320 }}
+              className="relative mt-0 flex-shrink-0 flex items-center justify-center"
             >
-              <Github className="w-5 h-5" />
-              <span>Generate Documentation</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-
-            <button className="px-8 py-4 rounded-lg text-lg font-semibold border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              View Demo
-            </button>
+              <Orb
+                hoverIntensity={0.5}
+                rotateOnHover={true}
+                hue={0}
+                forceHoverState={false}
+              />
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="bg-blue-600 rounded-full p-4 shadow-lg flex items-center justify-center">
+                  <FileText className="w-20 h-20 text-white drop-shadow-lg" />
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 justify-center items-center mt-8 md:mt-0">
+              <button
+                className="group bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 flex items-center space-x-3 shadow-lg w-64"
+                onClick={handleNavigate}
+              >
+                <Github className="w-5 h-5" />
+                <span>Generate Documentation</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <button className="px-8 py-4 rounded-lg text-lg font-semibold border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-64">
+                View Demo
+              </button>
+            </div>
           </div>
-
           {/* Demo URL Example */}
+
           <div className="max-w-2xl mx-auto">
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-300 mb-3 font-medium">
@@ -272,10 +300,10 @@ const LandingPage = () => {
           {/* Stats */}
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
             {[
-              { number: '10K+', label: 'Repositories Processed' },
-              { number: '500+', label: 'Happy Developers' },
-              { number: '50K+', label: 'Docs Generated' },
-              { number: '99%', label: 'Accuracy Rate' },
+              { number: "10K+", label: "Repositories Processed" },
+              { number: "500+", label: "Happy Developers" },
+              { number: "50K+", label: "Docs Generated" },
+              { number: "99%", label: "Accuracy Rate" },
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
@@ -308,7 +336,8 @@ const LandingPage = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <div
+              <SpotlightCard
+                spotlightColor="rgba(0, 229, 255, 0.2)"
                 key={index}
                 className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-200 dark:hover:border-blue-400 group"
               >
@@ -321,7 +350,7 @@ const LandingPage = () => {
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   {feature.description}
                 </p>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
         </div>
@@ -345,28 +374,28 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-3 gap-12">
             {[
               {
-                step: '1',
-                title: 'Paste Repository URL',
+                step: "1",
+                title: "Paste Repository URL",
                 description:
-                  'Enter any public GitHub repository URL. Our system will fetch and analyze the codebase automatically.',
+                  "Enter any public GitHub repository URL. Our system will fetch and analyze the codebase automatically.",
                 icon: <Link className="w-8 h-8" />,
-                color: 'bg-blue-600',
+                color: "bg-blue-600",
               },
               {
-                step: '2',
-                title: 'AI Analysis & Generation',
+                step: "2",
+                title: "AI Analysis & Generation",
                 description:
-                  'Our AI examines code structure, functions, and patterns to generate comprehensive documentation.',
+                  "Our AI examines code structure, functions, and patterns to generate comprehensive documentation.",
                 icon: <Layers className="w-8 h-8" />,
-                color: 'bg-green-600',
+                color: "bg-green-600",
               },
               {
-                step: '3',
-                title: 'Review & Export',
+                step: "3",
+                title: "Review & Export",
                 description:
-                  'View code and docs side-by-side, make adjustments, then download your markdown documentation.',
+                  "View code and docs side-by-side, make adjustments, then download your markdown documentation.",
                 icon: <Download className="w-8 h-8" />,
-                color: 'bg-purple-600',
+                color: "bg-purple-600",
               },
             ].map((item, index) => (
               <div key={index} className="text-center relative">
@@ -411,9 +440,10 @@ const LandingPage = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div
+              <SpotlightCard
                 key={index}
                 className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+                spotlightColor="rgba(0, 229, 255, 0.2)"
               >
                 <div className="flex items-center mb-4">
                   <img
@@ -438,7 +468,7 @@ const LandingPage = () => {
                     <Star key={i} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
         </div>
@@ -523,7 +553,7 @@ const LandingPage = () => {
         </div>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default LandingPage
+export default LandingPage;

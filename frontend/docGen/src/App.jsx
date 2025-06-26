@@ -1,8 +1,9 @@
-import React from 'react'
-import './App.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import LandingPage from './components/LandingPage'
-import GeneratePage from './components/GeneratePage'
+import React from "react";
+import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./components/LandingPage";
+import GeneratePage from "./components/GeneratePage";
+
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         </Routes>
       </Router>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
