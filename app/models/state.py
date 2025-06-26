@@ -26,6 +26,7 @@ class DocGenState(BaseModel):
     folder_tree: Optional[str] = None # Markdown Folder Structure
     readme: Optional[str] = None  # Final generated readme
     visuals: Optional[Dict[str, str]] = None
+    readme_summaries: Optional[Dict[str, str]] = None
 
     #User coustomization
     preferences: Optional[DocGenPreferences] = DocGenPreferences(

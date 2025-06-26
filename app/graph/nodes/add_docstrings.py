@@ -3,60 +3,66 @@ from app.models.state import DocGenState
 from app.utils.mistral import get_llm_response
 
 
-def build_prompt(code: str, file_path: str, entity_type: str) -> str:
+def build_batch_prompt(file_path: str, entities: dict, entity_type: str) -> str:
     lang = os.path.splitext(file_path)[1].lstrip(".")
-    return f"""You are a professional {lang} developer.
+    prompt = f"""You are a professional {lang} developer.
 
-            Add a concise, professional documentation comment **above the following {entity_type}**.
+Add a concise, professional documentation comment above each {entity_type} listed below.
 
-            ⚠️ Return **ONLY** the full modified {lang} code — no explanation, no markdown formatting, no extra text.
+⚠️ Return ONLY the full modified {lang} code blocks with docstrings — no explanation, no markdown, no ```.
 
-            DO NOT include \`\`\` or say "here is...". Just return the updated code.
+Do not change the logic. Just add documentation.
 
-            And dont make any changes to logic of the code it should be intact.
+"""
 
-            Just add a comment Docstring
+    for code, name in entities.items():
+        prompt += f"\n// --- {entity_type.capitalize()}: {name} ---\n{code}\n"
 
-            ```{lang}
-            {code}
-            ```"""
+    return prompt
+
 
 def add_docstrings(state: DocGenState) -> DocGenState:
     """
     Adds inline docstrings to parsed functions and classes using Mistral.
     Stores updated code in state.modified_files.
     """
-
-    print("Inside DocStirngs")
+    print("Inside DocStrings")
 
     if not state.preferences.add_inline_comments or not state.parsed_data:
         return state
-    
+
     modified_files = {}
     repo_data = state.parsed_data.get("repo_path", {})
 
     for file_path, file_data in repo_data.items():
-        updated_blocks = []
-
         print("Processing file:", file_path)
+        updated_blocks = []
 
         functions = file_data.get("functions", {})
         classes = file_data.get("classes", {})
 
-        # Process Functions
-        for func_code, func_name in functions.items():
-            print("Function:", func_name)
-            prompt = build_prompt(func_code, file_path=file_path, entity_type="function")
-            updated_code = get_llm_response(prompt=prompt).strip()
-            updated_blocks.append(updated_code)
+        # Batch Functions
+        if functions:
+            print(f"Batching {len(functions)} functions")
+            prompt = build_batch_prompt(file_path, functions, "function")
+            try:
+                result = get_llm_response(prompt).strip()
+                updated_blocks.append(result)
+            except Exception as e:
+                print(f"Error processing functions in {file_path}: {e}")
 
-        for class_code, class_name in classes.items():
-            print("Class:", class_name)
-            prompt = build_prompt(class_code, file_path=file_path, entity_type="class")
-            updated_code = get_llm_response(prompt=prompt)
-            updated_blocks.append(updated_code)
-        
-        modified_files[file_path] = '\n\n'.join(updated_blocks)
+        # Batch Classes
+        if classes:
+            print(f"Batching {len(classes)} classes")
+            prompt = build_batch_prompt(file_path, classes, "class")
+            try:
+                result = get_llm_response(prompt).strip()
+                updated_blocks.append(result)
+            except Exception as e:
+                print(f"Error processing classes in {file_path}: {e}")
+
+        if updated_blocks:
+            modified_files[file_path] = "\n\n".join(updated_blocks)
 
     state.modified_files = modified_files
-    return state    
+    return state

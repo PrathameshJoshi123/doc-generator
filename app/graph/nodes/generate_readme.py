@@ -1,5 +1,5 @@
 from app.models.state import DocGenState
-from app.utils.mistral import get_llm_response
+from app.utils.mistral import get_llm_response_readme
 
 def generate_readme(state: DocGenState) -> DocGenState:
     print("Inside readme")
@@ -9,9 +9,10 @@ def generate_readme(state: DocGenState) -> DocGenState:
     folder_structure = "\n".join(sorted(state.working_dir.keys())) if state.working_dir else "Not Availabe"
     summaries_section = []
 
-    if state.summaries:
-        for file, summary in state.summaries.items():
-            summaries_section.append(f"#### `{file}`\n {summary}")
+    if state.readme_summaries:
+        for file, summary in state.readme_summaries.items():
+            summaries_section.append(f"#### `{file}`\n- {summary}")
+
     
     summaries_text = "\n\n".join(summaries_section)
 
@@ -33,11 +34,6 @@ def generate_readme(state: DocGenState) -> DocGenState:
 
         ---
 
-        ## 📂 Folder Structure:
-        Use the following mermaid diagram or tree view to represent the file/folder layout:
-
-        {folder_structure}
-
         ## 📄 Code Summaries:
         Summarize key components, classes, and functions based on the analysis below:
 
@@ -46,12 +42,7 @@ def generate_readme(state: DocGenState) -> DocGenState:
         ---
 
         ## 📌 API Reference:
-        List any available API endpoints or methods. If none are detected, simply write "Not applicable."
-
-        ---
-
-        ## 🎯 System Design Goals:
-        Mention relevant architectural goals such as modularity, scalability, ease of onboarding, or testing support.
+        List any available API endpoints or methods. If not found leave it no need  to add anything.
 
         ---
 
@@ -60,17 +51,12 @@ def generate_readme(state: DocGenState) -> DocGenState:
 
         ---
 
-        ## 🚀 Deployment Guide:
-        Describe how to deploy this project in a typical production or staging environment.
-
-        ---
-
         Return only valid markdown content. Do not include explanations or preambles. Focus on technical accuracy and clarity.
         Note that is something is not applicable to the code leave it.
 """
     
 
-    readme_text = get_llm_response(prompt=prompt)
+    readme_text = get_llm_response_readme(prompt=prompt)
     print("readme\n", readme_text)
     state.readme = readme_text.strip()
     return state
