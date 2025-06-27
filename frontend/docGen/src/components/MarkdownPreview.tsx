@@ -199,15 +199,15 @@ export const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
         <div className="e text-gray-100 text-left prose prose-invert max-w-none">
           <Markdown 
             components={components}
-            // In your real implementation, add these props:
-            // remarkPlugins={[remarkGfm]} // for GitHub Flavored Markdown
+           
+            remarkPlugins={[remarkGfm]} // for GitHub Flavored Markdown
             
           >
             {markdownContent}
           </Markdown>
         </div>
       </div>
-      <style>{`
+      {/* <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
         }
@@ -222,7 +222,7 @@ export const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: rgba(6, 182, 212, 0.5);
         }
-      `}</style>
+      `}</style> */}
     </div>
   );
 };

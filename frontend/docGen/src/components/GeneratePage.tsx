@@ -25,13 +25,14 @@ import {
   File,
   Folder,
 } from "lucide-react";
-import { Navigation } from "./Navigation";
-import { InputSection } from "./InputSection";
-import {TabNavigation} from "./TabNavigation"
-import { MarkdownEditor } from "./MarkdownEditor";
-import { MarkdownPreview } from "./MarkdownPreview";
-import { ProjectStructure } from "./ProjectStructure";
-import { EmptyState } from "./EmptyState";
+import { Navigation } from "../components/Navigation";
+import { InputSection } from "../components/InputSection";
+import { TabNavigation } from "../components/TabNavigation";
+import { MarkdownEditor } from "../components/MarkdownEditor";
+import { MarkdownPreview } from "../components/MarkdownPreview";
+import { ProjectStructure } from "../components/ProjectStructure";
+import { EmptyState } from "../components/EmptyState";
+import { LoadingScreen } from "./LoadingScreen";
 
 const GeneratePage = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -47,6 +48,8 @@ const GeneratePage = () => {
   const [downloadUrl, setDownloadUrl] = useState("");
   const navigate = useNavigate();
 
+  const apiURL="https://doc-generator-5ueit34tu-prajwal-kulkarnis-projects.vercel.app"
+
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handleScroll);
@@ -56,7 +59,7 @@ const GeneratePage = () => {
   const handleDownloadZip = async () => {
     try {
       const response = await fetch(
-        `https://doc-generator-e1sk1j5xl-prajwal-kulkarnis-projects.vercel.app${downloadUrl}`,
+        `${apiURL}${downloadUrl}`,
         {
           method: "GET",
           headers: {
@@ -98,13 +101,13 @@ const GeneratePage = () => {
         formData.append("input_type", "zip");
         formData.append("zip_file", uploadedFile);
       }
-      
+
       let response;
       let result;
-      
+
       if (!injectComments) {
         response = await fetch(
-          "https://doc-generator-e1sk1j5xl-prajwal-kulkarnis-projects.vercel.app/generate",
+          `${apiURL}/generate`,
           {
             method: "POST",
             body: formData,
@@ -113,7 +116,7 @@ const GeneratePage = () => {
         result = await response.json();
       } else {
         response = await fetch(
-          "https://doc-generator-e1sk1j5xl-prajwal-kulkarnis-projects.vercel.app/generate-and-download",
+          `${apiURL}/generate-and-download`,
           {
             method: "POST",
             body: formData,
@@ -151,7 +154,10 @@ const GeneratePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 relative overflow-hidden">
+    <div className="min-h-screen w-7xl bg-gray-900 relative overflow-hidden">
+      {/* Loading Screen */}
+      <LoadingScreen isVisible={isLoading} />
+
       {/* Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-1/2 -left-1/2 w-full h-full rounded-full blur-3xl animate-pulse bg-gradient-to-r from-cyan-500/5 to-blue-500/5"></div>
@@ -160,13 +166,17 @@ const GeneratePage = () => {
       </div>
 
       {/* Navigation */}
-      <Navigation scrollY={scrollY} navigate={navigate} currentPage="generate" />
+      <Navigation
+        scrollY={scrollY}
+        navigate={navigate}
+        currentPage="generate"
+      />
 
       {/* Main Content */}
       <div className="relative z-10 w-full">
         {/* Header Section */}
         <div className="w-full bg-gradient-to-br from-gray-900 via-blue-900/10 to-gray-900 pt-20 pb-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-full mx-auto px-4">
             {/* Hero Section */}
             <div className="text-center mb-12">
               <div className="flex items-center justify-center mb-6">
@@ -178,7 +188,9 @@ const GeneratePage = () => {
                 GitHub Document Generator
               </h1>
               <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                Transform your repositories into beautiful, comprehensive documentation with AI-powered analysis and stunning visual representations.
+                Transform your repositories into beautiful, comprehensive
+                documentation with AI-powered analysis and stunning visual
+                representations.
               </p>
             </div>
 
@@ -265,16 +277,28 @@ const GeneratePage = () => {
               </div>
             </div>
             <div className="flex items-center space-x-8 text-gray-400">
-              <a href="#" className="hover:text-cyan-400 transition-colors duration-300 hover:scale-105 transform">
+              <a
+                href="#"
+                className="hover:text-cyan-400 transition-colors duration-300 hover:scale-105 transform"
+              >
                 Privacy Policy
               </a>
-              <a href="#" className="hover:text-cyan-400 transition-colors duration-300 hover:scale-105 transform">
+              <a
+                href="#"
+                className="hover:text-cyan-400 transition-colors duration-300 hover:scale-105 transform"
+              >
                 Terms of Service
               </a>
-              <a href="#" className="hover:text-cyan-400 transition-colors duration-300 hover:scale-105 transform">
+              <a
+                href="#"
+                className="hover:text-cyan-400 transition-colors duration-300 hover:scale-105 transform"
+              >
                 Support
               </a>
-              <a href="#" className="hover:text-cyan-400 transition-colors duration-300 hover:scale-110 transform">
+              <a
+                href="#"
+                className="hover:text-cyan-400 transition-colors duration-300 hover:scale-110 transform"
+              >
                 <Github className="w-6 h-6" />
               </a>
             </div>
