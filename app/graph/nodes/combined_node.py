@@ -1,4 +1,5 @@
 import os
+import time
 from app.models.state import DocGenState
 from app.utils.mistral import get_llm_response
 
@@ -72,6 +73,23 @@ def split_code_and_summary(response: str):
         return response.strip(), []
 
 
+def safe_llm_call(prompt: str, retries: int = 3, delay: int = 60) -> str:
+    """
+    Calls the LLM with retry logic for rate limiting and transient errors.
+    """
+    for attempt in range(1, retries + 1):
+        try:
+            return get_llm_response(prompt).strip()
+        except Exception as e:
+            if "429" in str(e):
+                print(f"[Rate Limit] Waiting {delay}s before retry... (Attempt {attempt}/{retries})")
+                time.sleep(delay)
+            else:
+                print(f"LLM call failed: {e}")
+                raise  # Raise other unexpected exceptions
+    raise Exception("Max retries reached for LLM call")
+
+
 def docstring_and_summary_node(state: DocGenState) -> DocGenState:
     """
     Sends entire file for documentation, extracts summaries, and stores results.
@@ -93,7 +111,7 @@ def docstring_and_summary_node(state: DocGenState) -> DocGenState:
         prompt = build_file_prompt(file_path, file_content)
 
         try:
-            result = get_llm_response(prompt).strip()
+            result = safe_llm_call(prompt)
 
             # Split code and summary
             code_only, summary_lines = split_code_and_summary(result)
@@ -104,9 +122,8 @@ def docstring_and_summary_node(state: DocGenState) -> DocGenState:
                 readme_summaries[file_path] = " ".join(summary_lines)
 
         except Exception as e:
-            print(f"Error processing {file_path}: {e}")
+            print(f"[Error] Failed to process {file_path}: {e}")
 
-    # Store all results back into state
     state.modified_files = modified_files
     state.summaries = summaries
     state.readme_summaries = readme_summaries
