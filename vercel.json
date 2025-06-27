@@ -10,7 +10,11 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "app/main.py"
+      "dest": "app/main.py",
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      },
+      "methods": ["GET", "POST"]
     }
   ]
 }

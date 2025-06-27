@@ -29,4 +29,4 @@ class DocGenState(BaseModel):
     readme_summaries: Optional[Dict[str, str]] = None
 
     #User coustomization
-    preferences: Optional[DocGenPreferences] 
+    preferences: Optional[DocGenPreferences]
