@@ -52,12 +52,11 @@ def detect_language(file_name: str):
 
 
 def parse_with_treesitter(file_path: str, lang_key: str):
-    language = LANGUAGE_MAP.get(lang_key)
+    language = Language(LANGUAGE_MAP.get(lang_key))
     if not language:
         return None
 
-    parser = Parser()
-    parser.set_language(language)
+    parser = Parser(language)
 
     items = {"functions": {}, "classes": {}}
 
