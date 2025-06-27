@@ -7,8 +7,8 @@ dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
 
-llm = init_chat_model(model="gemma2-9b-it", model_provider="groq", temperature=0.4)
-llm_readme = init_chat_model(model="mistral-large-latest", model_provider="mistralai", temperature=0.4)
+llm = init_chat_model(model="gemma2-9b-it", model_provider="groq", temperature=0.3)
+llm_readme = init_chat_model(model="deepseek-r1-distill-llama-70b", model_provider="groq", temperature=0.3)
 
 parser = StrOutputParser()
 
