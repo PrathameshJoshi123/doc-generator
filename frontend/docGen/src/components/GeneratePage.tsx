@@ -48,7 +48,7 @@ const GeneratePage = () => {
   const [downloadUrl, setDownloadUrl] = useState("");
   const navigate = useNavigate();
 
-  const apiURL="https://doc-generator-5ueit34tu-prajwal-kulkarnis-projects.vercel.app"
+  const apiURL="https://lf32z74w-8000.inc1.devtunnels.ms"
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -122,14 +122,15 @@ const GeneratePage = () => {
             body: formData,
           }
         );
+        console.log("handlgenerate",response)
         result = await response.json();
         setDownloadUrl(result.download_url);
       }
-
+      console.log(result);
       if (!response.ok) {
         throw new Error("Failed to generate docs");
       }
-
+      
       setMarkdownContent(result.readme);
       setProjectStructure(result.visuals.folder_structure_mermaid);
       setHasGenerated(true);
