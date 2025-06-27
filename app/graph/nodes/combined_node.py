@@ -25,23 +25,24 @@ def get_comment_syntax(lang: str) -> dict:
         return {"start": "//", "end": ""}
 
 
-def build_file_prompt(file_path: str, file_content: str) -> str:
+def build_file_prompt(file_path: str, file_content: str, lang: str) -> str:
     """
     Builds a prompt to send the full source file to the LLM for documentation and summarization.
     """
-    lang = os.path.splitext(file_path)[1].lstrip(".")
     comment_style = get_comment_syntax(lang)
 
     return f"""You are a professional {lang} developer and technical writer.
 
-Your job is to add helpful documentation comments to the following {lang} code file.
+Your job is to insert helpful documentation comments into the following {lang} code.
 
 Instructions:
 1. For each function or class, add a concise documentation comment above it using correct {lang} syntax.
-2. Do not change any code. Only insert comments.
-3. Keep indentation and formatting exactly the same.
-4. Do NOT use any Markdown formatting. Do NOT use backticks (`) or code blocks.
-5. At the END of the file, append a section like this:
+2. Do not modify or remove any original code.
+3. Return the FULL original code with the inserted comments included.
+4. Preserve the original formatting and indentation exactly.
+5. Do NOT use any Markdown or backticks — return plain source code.
+6. At the END of the code, append a section like this:
+
 ####SUMMARY####
 Class/Function summaries:
 - <Summary 1>
@@ -86,7 +87,7 @@ def safe_llm_call(prompt: str, retries: int = 3, delay: int = 60) -> str:
                 time.sleep(delay)
             else:
                 print(f"LLM call failed: {e}")
-                raise  # Raise other unexpected exceptions
+                raise
     raise Exception("Max retries reached for LLM call")
 
 
@@ -104,11 +105,14 @@ def docstring_and_summary_node(state: DocGenState) -> DocGenState:
     repo_data = state.parsed_data.get("repo_path", {})
 
     for file_path, file_data in repo_data.items():
-        file_content = file_data.get("content")
-        if not file_content:
+        file_code = file_data.get("code", "")
+        language = file_data.get("type", "text")
+        symbols = file_data.get("contains", [])
+
+        if not file_code.strip():
             continue
 
-        prompt = build_file_prompt(file_path, file_content)
+        prompt = build_file_prompt(file_path, file_code, language)
 
         try:
             result = safe_llm_call(prompt)
@@ -119,13 +123,18 @@ def docstring_and_summary_node(state: DocGenState) -> DocGenState:
             modified_files[file_path] = code_only
             if summary_lines:
                 summaries[file_path] = "\n".join([f"- {s}" for s in summary_lines])
-                readme_summaries[file_path] = " ".join(summary_lines)
+                readme_summaries[file_path] = {
+                    "file": file_path,
+                    "summary": " ".join(summary_lines),
+                    "type": language,
+                    "contains": symbols
+                }
 
         except Exception as e:
             print(f"[Error] Failed to process {file_path}: {e}")
 
     state.modified_files = modified_files
     state.summaries = summaries
-    state.readme_summaries = readme_summaries
+    state.readme_summaries = list(readme_summaries.values())
 
     return state

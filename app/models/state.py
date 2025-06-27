@@ -1,7 +1,7 @@
 # app/models/state.py
 
-from typing import Optional, Union, Dict, Any
-from pydantic import BaseModel
+from typing import List, Optional, Union, Dict, Any
+from pydantic import BaseModel, Field
 
 class DocGenPreferences(BaseModel):
     add_inline_comments: bool 
@@ -26,7 +26,7 @@ class DocGenState(BaseModel):
     folder_tree: Optional[str] = None # Markdown Folder Structure
     readme: Optional[str] = None  # Final generated readme
     visuals: Optional[Dict[str, str]] = None
-    readme_summaries: Optional[Dict[str, str]] = None
+    readme_summaries: Optional[List[Dict[str, Any]]] = None
 
     #User coustomization
     preferences: Optional[DocGenPreferences]

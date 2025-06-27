@@ -141,12 +141,23 @@ def generate_readme(state: DocGenState) -> DocGenState:
     folder_structure = "\n".join(sorted(state.working_dir.keys())) if state.working_dir else "Not Available"
     summaries_section = []
 
-    if state.readme_summaries:
-        for file, summary in state.readme_summaries.items():
-            summaries_section.append(f"#### `{file}`\n- {summary}")
+    if state.readme_summaries and isinstance(state.readme_summaries, list):
+        for item in state.readme_summaries:
+            file = item.get("file", "unknown")
+            summary = item.get("summary", "No summary available.")
+            ftype = item.get("type", "unknown")
+            contains = item.get("contains", [])
+
+            lines = [f"#### `{file}` ({ftype})"]
+            lines.append(f"- Summary: {summary}")
+            if contains:
+                lines.append(f"- Contains: {', '.join(contains)}")
+
+            summaries_section.append("\n".join(lines))
 
     summaries_text = "\n\n".join(summaries_section)
 
+    # === Prompt (unchanged)
     prompt = f"""
 You are an expert technical writer and developer documentation specialist.
 
@@ -175,12 +186,10 @@ Include a cleanly structured Markdown README using appropriate headings (`#`, `#
 1. `# Project Name` — If not available, leave it out.
 2. `## Project Overview` — Describe what the project does, its purpose, and context.
 3. `## Folder Structure` — Explain key folders and their roles.
-4. `## Code Summary` — Summarize the main files, classes, and functions from the code summaries.
-5. `## Installation / Setup` — Provide basic setup or environment instructions if any.
+4. `## Code Summary` — Summarize the main files, classes, and functions breifly from the code summaries.
+5. `## Installation / Setup` — Provide basic setup or environment instructions if and only if any.
 6. `## Usage` — Outline how to run or use the project.
-7. `## API Reference` — If the project exposes any APIs or CLI tools, document them briefly.
-8. `## Contributing` — Optional section if code appears extensible.
-9. `## License` — Add only if mentioned explicitly in folder or summaries.
+7. `## API Reference` — If and only if the project exposes any APIs or CLI tools, document them briefly.
 - Output must be in raw, valid, and properly formatted **Markdown** only.
 - Do **not** include any reasoning, commentary, or planning text like <think> or explanations.
 - Do **not** wrap the markdown inside code blocks (e.g., no triple backticks).

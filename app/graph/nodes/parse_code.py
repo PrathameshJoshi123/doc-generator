@@ -51,27 +51,18 @@ def detect_language(file_name: str):
     return None
 
 
-def parse_with_treesitter(file_path: str, lang_key: str):
+def extract_names(source_code: str, lang_key: str):
     language = Language(LANGUAGE_MAP.get(lang_key))
     if not language:
-        return None
+        return []
 
     parser = Parser(language)
-
-    items = {"functions": {}, "classes": {}}
-
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            source = f.read()
-    except Exception as e:
-        print(f"Error reading {file_path}", e)
-        return None
-
-    tree = parser.parse(bytes(source, "utf-8"))
+    tree = parser.parse(bytes(source_code, "utf-8"))
     root_node = tree.root_node
 
     cursor = root_node.walk()
     visited = set()
+    found_names = []
 
     while True:
         node = cursor.node
@@ -84,32 +75,14 @@ def parse_with_treesitter(file_path: str, lang_key: str):
 
         visited.add(node.id)
 
-        # Function-like constructs
         if node.type in [
-            "function_definition",        # C, C++
-            "function_declaration",       # JS, Go, Swift, Kotlin
-            "method_definition",          # JS
-            "method_declaration",         # TS, Kotlin
+            "function_definition", "function_declaration", "method_definition", "method_declaration",
+            "class_definition", "class_declaration", "class_specifier", "struct_specifier", "type_declaration"
         ]:
             name_node = node.child_by_field_name("name")
             if name_node:
-                name = source[name_node.start_byte:name_node.end_byte]
-                code = source[node.start_byte:node.end_byte]
-                items["functions"][code] = name
-
-        # Class-like constructs
-        elif node.type in [
-            "class_definition",       # Python
-            "class_declaration",      # Java, Swift, Kotlin
-            "class_specifier",        # C++
-            "struct_specifier",       # C, C++
-            "type_declaration",       # Go (for struct types)
-        ]:
-            name_node = node.child_by_field_name("name")
-            if name_node:
-                name = source[name_node.start_byte:name_node.end_byte]
-                code = source[node.start_byte:node.end_byte]
-                items["classes"][code] = name
+                name = source_code[name_node.start_byte:name_node.end_byte]
+                found_names.append(name.strip())
 
         if cursor.goto_first_child():
             continue
@@ -119,7 +92,7 @@ def parse_with_treesitter(file_path: str, lang_key: str):
             if not cursor.goto_parent():
                 break
 
-    return items if items else None
+    return found_names
 
 
 def walk_folder(base_path: str):
@@ -141,10 +114,14 @@ def walk_folder(base_path: str):
                 print(f"Error reading file {file_path}: {e}")
                 continue
 
-            parsed = parse_with_treesitter(file_path=file_path, lang_key=lang)
-            if parsed:
-                parsed["content"] = source_code
-                structure[rel_path] = parsed
+            contains = extract_names(source_code, lang)
+
+            structure[rel_path] = {
+                "file": rel_path,
+                "code": source_code,
+                "type": lang,
+                "contains": contains
+            }
 
     return structure
 
