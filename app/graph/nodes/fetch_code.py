@@ -33,7 +33,7 @@ from app.utils.file_ops import clone_github_repo, extract_zip_file
 def fetch_code(state: DocGenState) -> DocGenState:
     no = random.randint(1, 10000000)
 
-    path = f"/tmp/ClonedRepos/{no}"
+    path = f"{no}"
     custom_clone_path = path
 
     if state.input_type == "github":
