@@ -669,7 +669,7 @@ const LandingPage = () => {
 
             <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
               <p>
-                &copy; 2024 DocGen. All rights reserved. Built with ❤️ for
+                &copy; 2025 DocGen. All rights reserved. Built with ❤️ for
                 developers who value great documentation.
               </p>
             </div>

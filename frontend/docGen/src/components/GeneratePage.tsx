@@ -33,6 +33,7 @@ import { MarkdownPreview } from "../components/MarkdownPreview";
 import { ProjectStructure } from "../components/ProjectStructure";
 import { EmptyState } from "../components/EmptyState";
 import { LoadingScreen } from "./LoadingScreen";
+import axios from "axios";
 
 const GeneratePage = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -48,7 +49,7 @@ const GeneratePage = () => {
   const [downloadUrl, setDownloadUrl] = useState("");
   const navigate = useNavigate();
 
-  const apiURL="https://lf32z74w-8000.inc1.devtunnels.ms"
+  const apiURL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -58,15 +59,12 @@ const GeneratePage = () => {
 
   const handleDownloadZip = async () => {
     try {
-      const response = await fetch(
-        `${apiURL}${downloadUrl}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/x-zip-compressed",
-          },
-        }
-      );
+      const response = await fetch(`${apiURL}${downloadUrl}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/x-zip-compressed",
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -91,51 +89,51 @@ const GeneratePage = () => {
   const handleGenerateDocs = async () => {
     if (!repoUrl && !uploadedFile) return;
     setIsLoading(true);
+
     try {
       const formData = new FormData();
-      if (repoUrl) {
+
+      if (repoUrl && !uploadedFile) {
         formData.append("input_type", "github");
         formData.append("input_data", repoUrl);
-      }
-      if (uploadedFile) {
+      } else if (uploadedFile && !repoUrl) {
         formData.append("input_type", "zip");
         formData.append("zip_file", uploadedFile);
+      } else {
+        throw new Error(
+          "Provide either a GitHub repo URL or a ZIP file, not both."
+        );
       }
 
-      let response;
-      let result;
+      const endpoint = injectComments
+        ? `${apiURL}/generate-and-download`
+        : `${apiURL}/generate`;
 
-      if (!injectComments) {
-        response = await fetch(
-          `${apiURL}/generate`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-        result = await response.json();
-      } else {
-        response = await fetch(
-          `${apiURL}/generate-and-download`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-        console.log("handlgenerate",response)
-        result = await response.json();
+      const response = await axios.post(endpoint, formData, {
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        timeout: 300000, // 5 minutes
+      });
+
+      const result = response.data;
+
+      if (injectComments && result.download_url) {
         setDownloadUrl(result.download_url);
       }
-      console.log(result);
-      if (!response.ok) {
-        throw new Error("Failed to generate docs");
-      }
-      
+
       setMarkdownContent(result.readme);
       setProjectStructure(result.visuals.folder_structure_mermaid);
       setHasGenerated(true);
     } catch (error) {
-      console.error("Error generating docs:", error);
+      if (axios.isAxiosError(error) && error.code === "ECONNABORTED") {
+        console.error("Request timed out after 5 minutes");
+      } else {
+        console.error("Error generating docs:", error);
+        if (error.response) {
+          console.error("Server responded with:", error.response.data);
+        }
+      }
     } finally {
       setIsLoading(false);
     }
@@ -306,7 +304,7 @@ const GeneratePage = () => {
           </div>
           <div className="border-t border-gray-800/50 pt-8 text-center">
             <p className="text-gray-400 text-lg">
-              &copy; 2024 DocGen. All rights reserved. Built with{" "}
+              &copy; 2025 DocGen. All rights reserved. Built with{" "}
               <span className="text-red-400 animate-pulse">❤️</span> for
               developers who value great documentation.
             </p>
