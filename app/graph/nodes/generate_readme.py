@@ -163,61 +163,33 @@ You are an expert technical writer. Generate a comprehensive, professional READM
 
 CRITICAL INSTRUCTIONS:
 - Analyze the provided code summaries to understand what this codebase contains
-- Create a meaningful *Project Title* based on the actual code content and purpose
-- Write *Project Overview* describing what this codebase does based on the summaries
+- Create a meaningful project title based on the actual code content and purpose
 - Be precise and factual - only use information from the summaries provided
 - Write in clear, professional language suitable for developers
 - Do NOT add code examples, backticks, or wrap your response in markdown blocks
 - Output ONLY the README content in plain markdown format
-- Be concise but complete
+- Use appropriate emojis in section headers to make it visually appealing
 - This should work for ANY type of repository (web dev, AI/ML, DSA, mobile apps, etc.)
 
-REQUIRED README STRUCTURE:
+OUTPUT FORMAT:
 
-## Project Title
-Create a descriptive title based on the actual code content and purpose from the summaries
+Start with H1 title based on the code content, followed immediately by a brief description paragraph (no "Project Overview" heading).
 
-## Project Overview  
-Describe what this codebase does, its main purpose, and target use case based on the summaries
+Then include these sections with emojis:
+- 🚀 Features (list specific capabilities from summaries)  
+- 🛠 Tech Stack (list technologies mentioned in summaries)
+- 📁 Folder Structure (display the provided structure)
+- 📋 Code Summary (comprehensive overview organized by Core Components, Supporting Modules, Configuration, Additional Features)
+- ⚙ Installation (only if installation files mentioned)
+- 🚀 Usage (only if usage info available in summaries)  
+- 📝 API Reference (Include **ALL** API only if API endpoints present in summaries)
 
-## Features
-List the specific features and capabilities found in the code summaries
+For Code Summary, organize with bold subheadings:
+*Core Components, **Supporting Modules, **Configuration and Setup, **Additional Features*
 
-## Folder Structure
-Display the provided folder structure clearly
+Include file names, key functions/classes, and how components interact based on the summaries provided.
 
-## Code Summary
-Combine ALL the provided individual file summaries into one comprehensive overview. Organize logically based on the actual code structure:
-
-### Core Components
-- List main application files, classes, and their functionality from summaries
-- Explain the primary logic and workflow
-
-### Supporting Modules
-- List utility files, helper functions, and supporting components from summaries
-- Explain how they support the main functionality
-
-### Configuration and Setup
-- List configuration files, setup scripts, or initialization files from summaries
-- Explain their purpose in the project
-
-### Additional Features
-- List any additional functionality, plugins, or extensions from summaries
-
-For each section, include:
-- File names and their primary purpose from summaries
-- Key classes, functions, and methods mentioned
-- How components interact with each other
-- Implementation details provided in the summaries
-
-## Installation
-Include only if installation files (package.json, requirements.txt, Dockerfile, etc.) are mentioned in summaries
-
-## Usage
-Provide usage instructions based on the actual functionality described in summaries
-
-## API Reference
-Include **ALL** API endpoints, routes, or programmatic interfaces if and only if present in summaries
+IMPORTANT: Do NOT add any meta-commentary about documentation generation. End naturally after the last relevant section.
 
 ---
 ### 📁 Folder Structure:
