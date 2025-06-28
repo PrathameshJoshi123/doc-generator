@@ -110,9 +110,6 @@ const GeneratePage = () => {
         : `${apiURL}/generate`;
 
       const response = await axios.post(endpoint, formData, {
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
         timeout: 1200000, // 20 minutes
       });
 
