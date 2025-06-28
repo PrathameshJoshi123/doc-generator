@@ -17,8 +17,7 @@ llm_summary = init_chat_model(
 llm_readme = init_chat_model(
     model="qwen-qwq-32b",
     model_provider="groq",
-    temperature=0.1,           # low for deterministic summaries
-    top_p=0.95,                # recommended from Qwen docs
+    temperature=0.1,           # low for deterministic summaries               # recommended from Qwen docs
     reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
 )
 
