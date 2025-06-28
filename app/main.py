@@ -22,6 +22,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def read_root():
+    return {"message": "Hello from FastAPI on Render!"}
+
 @app.post("/generate")
 async def generate_docs(
     input_type: str = Form(...),  # "github", "zip", or "upload"
