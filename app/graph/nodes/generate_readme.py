@@ -180,8 +180,8 @@ Then include these sections with emojis:
 - 🛠 Tech Stack (list technologies mentioned in summaries)
 - 📁 Folder Structure (display the provided structure)
 - 📋 Code Summary (comprehensive overview organized by Core Components, Supporting Modules, Configuration, Additional Features)
-- ⚙ Installation (only if installation files mentioned)
-- 🚀 Usage (only if usage info available in summaries)  
+- ⚙ Installation (if and only if installation files mentioned)
+- 🚀 Usage (if and only if usage info available in summaries)  
 - 📝 API Reference (Include **ALL** API only if API endpoints present in summaries)
 
 For Code Summary, organize with bold subheadings:
