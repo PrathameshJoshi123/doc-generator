@@ -1,55 +1,105 @@
 from app.models.state import DocGenState
-from app.utils.mistral import get_llm_response
-import os
+from app.utils.mistral import get_llm_response_summary
+import re
 
+CHUNK_SIZE = 300
+CHUNK_OVERLAP = 10
+
+def split_code_into_chunks(code: str, lines_per_chunk=CHUNK_SIZE, overlap=CHUNK_OVERLAP) -> list[str]:
+    """
+    Splits code into overlapping chunks based on lines.
+    """
+    lines = code.splitlines()
+    chunks = []
+    for i in range(0, len(lines), lines_per_chunk - overlap):
+        chunk = "\n".join(lines[i:i + lines_per_chunk])
+        chunks.append(chunk)
+    return chunks
+
+def parse_llm_summary_response(response: str) -> list[dict]:
+    """
+    Parses the LLM response to extract structured summaries.
+    """
+    lines = [
+        line.strip("- ").strip()
+        for line in response.strip().splitlines()
+        if line.strip().startswith("-")
+    ]
+
+    structured = []
+    for line in lines:
+        match = re.match(r"([\w_]+)\s*[:\-–]\s*(.+)", line)
+        if match:
+            symbol, summary = match.groups()
+            structured.append({"symbol": symbol.strip(), "summary": summary.strip()})
+        else:
+            structured.append({"symbol": None, "summary": line})
+    return structured
 
 def summarize_code_node(state: DocGenState) -> DocGenState:
-    """
-    Summarize each source file using LLM and store detailed summaries and README-ready summaries.
-    """
     if not state.preferences.generate_summary or not state.parsed_data:
         return state
 
-    summaries = {}
-    readme_summaries = {}
+    file_path = state.current_file_path
+    file_info = state.parsed_data["repo_path"][file_path]
 
-    repo_data = state.parsed_data.get("repo_path", {})
+    file_code = file_info.get("code", "")
+    language = file_info.get("type", "text")
+    symbols = file_info.get("contains", [])
 
-    for file_path, file_info in repo_data.items():
-        print("Processing file:", file_path)
+    if not file_code.strip():
+        return state
 
-        file_code = file_info.get("code", "")
-        language = file_info.get("type", "text")
-        symbols = file_info.get("contains", [])
+    chunks = split_code_into_chunks(file_code)
+    all_structured_summaries = []
 
-        if not file_code.strip():
-            continue
+    for chunk in chunks:
 
-        # Strict, concise summarization prompt
         prompt = (
-            f"You are a senior software engineer reviewing the following {language} source file.\n"
-            f"For every function or class defined in this file, write a strict, technical 1-3 lines summary "
-            f"explaining its purpose and behavior. Do NOT include any general description of the file.\n\n"
-            f"Return only one line per symbol (function/class) from this list: {', '.join(symbols) if symbols else '[none]'}.\n\n"
-            f"### Code:\n```{language}\n{file_code.strip()}\n```"
+            f"Analyze the following {language} source file carefully for README documentation purposes. "
+            f"Write a concise technical summary (2-4 sentences) that includes: "
+            f"1) The file's primary purpose and functionality "
+            f"2) Key classes/functions and their roles (only the most important ones) "
+            f"3) How this file contributes to the overall application "
+            f"4) Any notable implementation details, algorithms, or patterns used "
+            f"5) API endpoints, routes, or public interfaces if present (with HTTP methods and paths) "
+            f"Focus on information that would help developers understand this component's role in the codebase. "
+            f"Do NOT list every function - only highlight core functionality that defines what this file does. "
+            f"If this file contains API routes, endpoints, or public interfaces, mention them specifically. "
+            f"Keep it technical but accessible for README documentation.\n\n"
+            f"### Code:\n{chunk.strip()}"
         )
 
-        response = get_llm_response(prompt).strip()
-        cleaned_summary = response.replace("```", "").strip()
 
-        summaries[file_path] = cleaned_summary
+        try:
+            response = get_llm_response_summary(prompt, language).strip()
+            print(f"[LLM RAW RESPONSE for {file_path}]:\n{response}\n{'-' * 50}")
+            structured = parse_llm_summary_response(response)
+            all_structured_summaries.extend(structured)
+        except Exception as e:
+            print(f"[Error] Summarizing chunk in {file_path}: {e}")
 
-        # Extract first usable sentence for README
-        first_line = cleaned_summary.split(".")[0].strip()
-        readme_summary = {
-            "file": file_path,
-            "summary": f"{first_line}." if first_line else "No summary available.",
-            "type": language,
-            "contains": symbols
-        }
+    # Combine summaries into a single short paragraph
+    combined_summary = " ".join([s['summary'] for s in all_structured_summaries if s['summary']]).strip()
 
-        readme_summaries[file_path] = readme_summary
+    if not state.readme_summaries:
+        state.readme_summaries = []
 
-    state.summaries = summaries
-    state.readme_summaries = list(readme_summaries.values())
+    # Remove any existing summary for this file to avoid duplicates
+    state.readme_summaries = [
+        s for s in state.readme_summaries if s["file"] != file_path
+    ]
+
+    # Append new summary
+    state.readme_summaries.append({
+        "file": file_path,
+        "summary": combined_summary if combined_summary else "No summary available.",
+        "type": language,
+        "contains": symbols
+    })
+
+    print("state.readme: ", state.readme_summaries)
+    # Save full summary text too (if needed elsewhere)
+    state.summaries[file_path] = combined_summary
+
     return state

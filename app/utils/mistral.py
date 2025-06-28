@@ -7,23 +7,57 @@ dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
 
-llm = init_chat_model(model="gemma2-9b-it", model_provider="groq", temperature=0.3)
-llm_readme = init_chat_model(model="deepseek-r1-distill-llama-70b", model_provider="groq", temperature=0.3)
+llm_summary = init_chat_model(
+    model="qwen-qwq-32b",
+    model_provider="groq",
+    temperature=0.1,           # low for deterministic summaries
+    top_p=0.95,                # recommended from Qwen docs
+    reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
+)
+llm_readme = init_chat_model(
+    model="qwen-qwq-32b",
+    model_provider="groq",
+    temperature=0.1,           # low for deterministic summaries
+    top_p=0.95,                # recommended from Qwen docs
+    reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
+)
+
+llm_commenting = init_chat_model(
+    model="deepseek-r1-distill-llama-70b",
+    model_provider="groq",
+    temperature=0.6
+)
 
 parser = StrOutputParser()
 
-def get_llm_response(prompt: str) -> str:
+def get_llm_response_summary(prompt: str, language: str) -> str:
     """
     Call Mistral LLM with a prompt string and return plain text output.
     """
 
-    messages = [("system", prompt)]
-    chain = llm | StrOutputParser()
+    messages = [
+        ("system", 
+        f"You are a highly skilled senior {language} software engineer. "
+        f"Always write precise, technical, and concise output without adding explanations or extra commentary."),
+        ("user", prompt)
+        ]
+    chain = llm_summary | StrOutputParser()
     return chain.invoke(messages)
 
 def get_llm_response_readme(prompt: str) -> str:
-
-
-    messages = [("system", prompt)]
+    messages = [
+        ("system", 
+        "You are a technical writer and documentation specialist. "
+        "You create clean, professional, and well-structured Markdown documentation. "
+        "Always be concise, precise, and avoid adding any extra commentary or text."),
+        ("user", prompt)
+    ]
     chain = llm_readme | StrOutputParser()
+    return chain.invoke(messages)
+
+
+def get_llm_response_commenting(prompt: str) -> str:
+
+    messages = [("user", prompt)]
+    chain = llm_commenting | StrOutputParser()
     return chain.invoke(messages)

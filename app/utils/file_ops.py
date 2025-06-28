@@ -56,7 +56,8 @@ def clone_github_repo(repo_url: str, repo_id: str) -> str:
     return temp_dir  # or the extracted folder path
 
 def extract_zip_file(base64_data: str, dest_dir: str) -> str:
-    os.makedirs(dest_dir, exist_ok=True)  # Ensure target directory exists
+    temp_dir = f"/tmp/ClonedRepos/{dest_dir}"
+    os.makedirs(temp_dir, exist_ok=True)  # Ensure target directory exists
 
     zip_data = base64.b64decode(base64_data)
     zip_path = os.path.join(dest_dir, "code.zip")

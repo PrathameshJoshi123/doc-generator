@@ -1,18 +1,16 @@
 from app.models.state import DocGenState
-from app.utils.mistral import get_llm_response
+from app.utils.mistral import get_llm_response_commenting
+import re
 
 def visualize_code_node(state: DocGenState) -> DocGenState:
     if not state.working_dir:
         return state
 
     repo_data = state.parsed_data.get("repo_path", {})
+    file_paths = sorted(repo_data.keys())
 
-    # Step 1: Build folder structure as a list of paths
-    file_paths = sorted(repo_data.keys())  # e.g., ['src/main.py', 'src/utils/helpers.py', 'README.md']
-
-    # Add folders from file paths
+    # Build all folder and file paths
     all_paths = set()
-
     for file_path in file_paths:
         parts = file_path.split("/")
         for i in range(1, len(parts)):
@@ -20,42 +18,53 @@ def visualize_code_node(state: DocGenState) -> DocGenState:
             all_paths.add(folder)
         all_paths.add(file_path)
 
-# Combine and sort
     folder_structure = "\n".join(sorted(all_paths))
-
     print("folder_structure:\n", folder_structure)
-        # Step 2: Ask the LLM to convert this into a Mermaid diagram
 
     prompt = f"""
-    You are given a list of file paths that represent a folder structure:
+You are a precise and highly disciplined technical assistant.
 
-    {folder_structure}
+Your task: Generate a Mermaid.js diagram using the `graph TD` syntax that exactly matches the folder structure given below.
 
-    Your task is to generate a Mermaid.js diagram using the `graph TD` syntax that exactly reflects this folder structure.
+Folder structure:
+{folder_structure}
 
-    ❗️Important:
-    - Do not invent or assume any extra folders or files.
-    - Only include what is explicitly present in the list.
-    - Use clear and consistent folder/file names.
-    - Do not add any explanation, title, or comments.
-    - Output only valid Mermaid code, starting with `graph TD`.
-    - Keep Project root as Project_Root
+⚠️ Strict instructions:
+- Do NOT add any reasoning steps, thought process, or "thinking" blocks.
+- Do NOT invent or assume any extra folders or files.
+- Only include items explicitly present in the list.
+- Do NOT add any comments, explanation, or text before or after the diagram.
+- Output ONLY valid Mermaid code, starting with `graph TD`.
+- Use "Project_Root" as the root node label.
 
-    Example format:
-    graph TD
-        A[Project Root] --> B[src/]
-        B --> C[main.py]
-        A --> D[README.md]
+Example format:
+graph TD
+    A[Project_Root] --> B[src/]
+    B --> C[main.py]
+    A --> D[README.md]
 
-    Now output the Mermaid diagram based strictly on the provided paths:
-    """
+Now generate the Mermaid diagram strictly based on the provided paths.
+"""
 
-    # Step 3: Get the Mermaid diagram from the LLM
-    response = get_llm_response(prompt=prompt)
-    mermaid_code = response.content if hasattr(response, "content") else response
+    # Get the response
+    response = get_llm_response_commenting(prompt=prompt)
+    raw_content = response.content if hasattr(response, "content") else response
 
-    # Step 4: Store in state.visuals
+    # Remove <think> blocks
+    cleaned_content = re.sub(r"<think>.*?</think>", "", raw_content, flags=re.DOTALL).strip()
+
+    # Keep only the part starting from 'graph TD'
+    mermaid_start = cleaned_content.find("graph TD")
+    if mermaid_start != -1:
+        mermaid_code = cleaned_content[mermaid_start:].strip()
+    else:
+        mermaid_code = cleaned_content  # fallback if already clean
+
+    # Explicitly remove any stray backticks
+    mermaid_code = mermaid_code.replace("`", "")
+
+    # Store in state
     state.visuals = state.visuals or {}
-    state.visuals["folder_structure_mermaid"] = mermaid_code.strip()
+    state.visuals["folder_structure_mermaid"] = mermaid_code
 
     return state
