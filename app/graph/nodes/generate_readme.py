@@ -217,7 +217,7 @@ Include only if installation files (package.json, requirements.txt, Dockerfile, 
 Provide usage instructions based on the actual functionality described in summaries
 
 ## API Reference
-Include only if API endpoints, routes, or programmatic interfaces are present in summaries
+Include **ALL** API endpoints, routes, or programmatic interfaces if and only if present in summaries
 
 ---
 ### 📁 Folder Structure:

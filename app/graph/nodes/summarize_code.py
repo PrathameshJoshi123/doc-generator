@@ -62,7 +62,7 @@ def summarize_code_node(state: DocGenState) -> DocGenState:
             f"2) Key classes/functions and their roles (only the most important ones) "
             f"3) How this file contributes to the overall application "
             f"4) Any notable implementation details, algorithms, or patterns used "
-            f"5) API endpoints, routes, or public interfaces if present (with HTTP methods and paths) "
+            f"5) **All** API endpoints, routes, or public interfaces if present (with HTTP methods and paths) "
             f"Focus on information that would help developers understand this component's role in the codebase. "
             f"Do NOT list every function - only highlight core functionality that defines what this file does. "
             f"If this file contains API routes, endpoints, or public interfaces, mention them specifically. "

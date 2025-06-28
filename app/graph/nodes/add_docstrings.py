@@ -1,4 +1,5 @@
 import os
+import re
 import time
 from app.models.state import DocGenState
 from app.utils.mistral import get_llm_response_commenting
@@ -38,7 +39,6 @@ Start your output directly with the modified code.
 """
     return prompt
 
-
 def safe_llm_call(prompt: str, retries: int = 3, delay: int = 60) -> str:
     """
     Calls the LLM with retry logic for rate limiting.
@@ -56,10 +56,16 @@ def safe_llm_call(prompt: str, retries: int = 3, delay: int = 60) -> str:
                 raise
     raise Exception("Max retries reached for LLM call.")
 
+def remove_think_blocks(text: str) -> str:
+    """
+    Removes <think>...</think> blocks from text.
+    """
+    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+
 def add_docstrings(state: DocGenState) -> DocGenState:
     """
     Adds inline docstrings to all functions and classes in a single file by chunking full file code.
-    Stores updated code in state.modified_files.
+    Stores updated code in state.modified_files without overwriting other entries.
     """
     print("Inside DocStrings")
 
@@ -67,7 +73,10 @@ def add_docstrings(state: DocGenState) -> DocGenState:
         return state
 
     file_path = state.current_file_path
-    file_data = state.parsed_data["repo_path"][file_path]
+    file_data = state.parsed_data["repo_path"].get(file_path)
+
+    if not file_data:
+        return state
 
     file_code = file_data.get("code", "")
     if not file_code.strip():
@@ -83,12 +92,18 @@ def add_docstrings(state: DocGenState) -> DocGenState:
         prompt = build_file_prompt(lang, chunk)
         try:
             result = safe_llm_call(prompt)
-            updated_chunks.append(result)
+            cleaned_result = remove_think_blocks(result)
+            updated_chunks.append(cleaned_result)
         except Exception as e:
             print(f"Error processing chunk {idx + 1} in {file_path}: {e}")
 
-    # Combine updated chunks
     final_code = "\n\n".join(updated_chunks)
+
+    # Ensure we don't overwrite other modified files
+    if not state.modified_files:
+        state.modified_files = {}
+
     state.modified_files[file_path] = final_code
 
     return state
+
