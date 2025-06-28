@@ -113,7 +113,7 @@ const GeneratePage = () => {
         // headers: {
         //   "Content-Type": "multipart/form-data",
         // },
-        timeout: 300000, // 5 minutes
+        timeout: 1200000, // 20 minutes
       });
 
       const result = response.data;
