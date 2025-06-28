@@ -56,16 +56,31 @@ def clone_github_repo(repo_url: str, repo_id: str) -> str:
     return temp_dir  # or the extracted folder path
 
 def extract_zip_file(base64_data: str, dest_dir: str) -> str:
-    temp_dir = f"/tmp/ClonedRepos/{dest_dir}"
-    os.makedirs(temp_dir, exist_ok=True)  # Ensure target directory exists
+    """
+    Decodes a base64-encoded zip file, writes it to disk, and extracts it to a subdirectory.
+    
+    Args:
+        base64_data: Base64 string containing zip file data.
+        dest_dir: Directory under /tmp/ClonedRepos/ where files should be extracted.
+    
+    Returns:
+        Path to the extracted folder.
+    """
+    # Full destination base directory under /tmp/ClonedRepos
+    base_temp_dir = f"/tmp/ClonedRepos/{dest_dir}"
+    os.makedirs(base_temp_dir, exist_ok=True)
 
+    # Decode base64 data
     zip_data = base64.b64decode(base64_data)
-    zip_path = os.path.join(dest_dir, "code.zip")
 
+    # Write zip file to disk
+    zip_path = os.path.join(base_temp_dir, "code.zip")
     with open(zip_path, "wb") as f:
         f.write(zip_data)
 
-    extract_path = os.path.join(dest_dir, "extracted")
+    # Extract zip contents
+    extract_path = os.path.join(base_temp_dir, "extracted")
+    os.makedirs(extract_path, exist_ok=True)
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(extract_path)
 
