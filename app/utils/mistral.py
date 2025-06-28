@@ -7,23 +7,26 @@ dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
 
+# Use DeepSeek for summarization and README generation
 llm_summary = init_chat_model(
-    model="qwen-qwq-32b",
-    model_provider="groq",
-    temperature=0.1,               # recommended from Qwen docs
-    reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
-)
-llm_readme = init_chat_model(
-    model="qwen-qwq-32b",
-    model_provider="groq",
-    temperature=0.1,           # low for deterministic summaries               # recommended from Qwen docs
-    reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
-)
-
-llm_commenting = init_chat_model(
     model="deepseek-r1-distill-llama-70b",
     model_provider="groq",
-    temperature=0.6
+    temperature=0.1,
+    reasoning_format="parsed"  # strongly recommended
+)
+
+llm_readme = init_chat_model(
+    model="deepseek-r1-distill-llama-70b",
+    model_provider="groq",
+    temperature=0.1,
+    reasoning_format="parsed"  # strongly recommended
+)
+
+# Use Compound-beta for commenting (inline comments/docstrings)
+llm_commenting = init_chat_model(
+    model="compound-beta",
+    model_provider="groq",
+    temperature=0.6  # recommended for creative, helpful code comments
 )
 
 parser = StrOutputParser()
