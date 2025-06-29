@@ -25,7 +25,7 @@ import {
   File,
   Folder,
 } from "lucide-react";
-import { Navigation } from "../components/Navigation";
+import Navigation from "./Navigation";
 import { InputSection } from "../components/InputSection";
 import { TabNavigation } from "../components/TabNavigation";
 import { MarkdownEditor } from "../components/MarkdownEditor";
@@ -150,7 +150,7 @@ const GeneratePage = () => {
   ];
 
   return (
-    <div className="min-h-screen w-7xl bg-gray-900 relative overflow-hidden">
+    <div className="min-h-screen w-full bg-gray-900 relative overflow-hidden">
       {/* Loading Screen */}
       <LoadingScreen isVisible={isLoading} />
 
@@ -171,19 +171,19 @@ const GeneratePage = () => {
       {/* Main Content */}
       <div className="relative z-10 w-full">
         {/* Header Section */}
-        <div className="w-full bg-gradient-to-br from-gray-900 via-blue-900/10 to-gray-900 pt-20 pb-8">
-          <div className="max-w-full mx-auto px-4">
+        <div className="w-full bg-gradient-to-br from-gray-900 via-blue-900/10 to-gray-900 pt-16 sm:pt-20 pb-6 sm:pb-8">
+          <div className="max-w-full mx-auto px-3 sm:px-4 lg:px-6">
             {/* Hero Section */}
-            <div className="text-center mb-12">
-              <div className="flex items-center justify-center mb-6">
-                <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 rounded-2xl shadow-2xl shadow-cyan-500/20 animate-pulse">
-                  <Github className="w-12 h-12 text-white" />
+            <div className="text-center mb-8 sm:mb-12">
+              <div className="flex items-center justify-center mb-4 sm:mb-6">
+                <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-2xl shadow-cyan-500/20 animate-pulse">
+                  <Github className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white" />
                 </div>
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent px-2">
                 GitHub Document Generator
               </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
                 Transform your repositories into beautiful, comprehensive
                 documentation with AI-powered analysis and stunning visual
                 representations.
@@ -207,9 +207,9 @@ const GeneratePage = () => {
         </div>
 
         {/* Content Section */}
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-6 sm:py-8">
           {hasGenerated ? (
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {/* Tab Navigation */}
               <TabNavigation
                 tabs={tabs}
@@ -218,7 +218,7 @@ const GeneratePage = () => {
               />
 
               {/* Tab Content */}
-              <div className="min-h-[600px]">
+              <div className="min-h-[400px] sm:min-h-[500px] lg:min-h-[600px]">
                 {activeTab === "editor" && (
                   <MarkdownEditor
                     markdownContent={markdownContent}
@@ -237,14 +237,15 @@ const GeneratePage = () => {
 
               {/* Download Section */}
               {injectComments && (
-                <div className="flex justify-center pt-8">
+                <div className="flex justify-center pt-6 sm:pt-8">
                   <button
-                    className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-lg font-semibold shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 transform hover:scale-105 border border-cyan-400/20"
+                    className="group flex items-center gap-2 sm:gap-3 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm sm:text-base lg:text-lg font-semibold shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 transform hover:scale-105 border border-cyan-400/20"
                     onClick={handleDownloadZip}
                   >
-                    <Folder className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                    Download Full Project ZIP
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <Folder className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform" />
+                    <span className="hidden sm:inline">Download Full Project ZIP</span>
+                    <span className="sm:hidden">Download ZIP</span>
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
               )}
@@ -256,23 +257,23 @@ const GeneratePage = () => {
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 bg-gradient-to-t from-black to-gray-900 text-white py-16 px-4 sm:px-6 lg:px-8 mt-20 border-t border-cyan-500/10">
+      <footer className="relative z-10 bg-gradient-to-t from-black to-gray-900 text-white py-12 sm:py-16 px-3 sm:px-4 lg:px-6 xl:px-8 mt-16 sm:mt-20 border-t border-cyan-500/10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-12">
-            <div className="flex items-center space-x-4 mb-8 md:mb-0">
-              <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded-xl shadow-lg shadow-cyan-500/25">
-                <FileText className="w-8 h-8 text-white" />
+          <div className="flex flex-col lg:flex-row justify-between items-center mb-8 sm:mb-12">
+            <div className="flex items-center space-x-3 sm:space-x-4 mb-6 lg:mb-0">
+              <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-2 sm:p-3 rounded-lg sm:rounded-xl shadow-lg shadow-cyan-500/25">
+                <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
               <div>
-                <span className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                   DocGen
                 </span>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-400 text-xs sm:text-sm">
                   AI-Powered Documentation
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-8 text-gray-400">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8 text-gray-400 text-sm sm:text-base">
               <a
                 href="#"
                 className="hover:text-cyan-400 transition-colors duration-300 hover:scale-105 transform"
@@ -295,12 +296,12 @@ const GeneratePage = () => {
                 href="#"
                 className="hover:text-cyan-400 transition-colors duration-300 hover:scale-110 transform"
               >
-                <Github className="w-6 h-6" />
+                <Github className="w-5 h-5 sm:w-6 sm:h-6" />
               </a>
             </div>
           </div>
-          <div className="border-t border-gray-800/50 pt-8 text-center">
-            <p className="text-gray-400 text-lg">
+          <div className="border-t border-gray-800/50 pt-6 sm:pt-8 text-center">
+            <p className="text-gray-400 text-sm sm:text-base lg:text-lg">
               &copy; 2025 DocGen. All rights reserved. Built with{" "}
               <span className="text-red-400 animate-pulse">❤️</span> for
               developers who value great documentation.
