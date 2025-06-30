@@ -122,6 +122,8 @@ const GeneratePage = () => {
       setMarkdownContent(result.readme);
       setProjectStructure(result.visuals.folder_structure_mermaid);
       setHasGenerated(true);
+      setRepoUrl("");
+      setUploadedFile(null);
     } catch (error) {
       if (axios.isAxiosError(error) && error.code === "ECONNABORTED") {
         console.error("Request timed out after 5 minutes");
