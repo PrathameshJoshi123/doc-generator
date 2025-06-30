@@ -161,12 +161,7 @@ export const ProjectStructure: React.FC<ProjectStructureProps> = ({
                 <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
-            <button className="p-1.5 sm:p-2 rounded-md sm:rounded-lg transition-all duration-300 hover:bg-white/10 text-gray-300 hover:text-white hover:shadow-lg hover:shadow-cyan-500/20 transform hover:scale-110">
-              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
-            <button className="p-1.5 sm:p-2 rounded-md sm:rounded-lg transition-all duration-300 hover:bg-white/10 text-gray-300 hover:text-white hover:shadow-lg hover:shadow-cyan-500/20 transform hover:scale-110">
-              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
+           
           </div>
         </div>
       </div>
