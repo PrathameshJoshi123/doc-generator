@@ -44,12 +44,82 @@ LANGUAGE_EXTENSIONS = {
 }
 
 
+EXCLUDED_FOLDERS = {
+    "node_modules", "venv", ".venv", "env", ".env",
+    ".git", ".idea", ".vscode", "__pycache__",
+    "dist", "build", ".next", "out", ".parcel-cache",
+    "coverage", "logs", "tmp", "temp",
+}
+
+EXCLUDED_FILES = {
+    # Node & frontend
+    "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb",
+    "vite.config.ts", "vite.config.js", "webpack.config.js", "rollup.config.js",
+    "esbuild.config.js", "snowpack.config.js", "metro.config.js", "vite-env.d.ts"
+
+    # TypeScript
+    "tsconfig.json", "tsconfig.app.json", "tsconfig.node.json", "tsconfig.base.json",
+    "tslint.json",
+
+    # Linters & formatters
+    "eslint.config.js", ".eslintrc.js", ".eslintrc.json", ".prettierrc", ".prettierrc.js",
+    ".prettierrc.json", ".stylelintrc", ".stylelintrc.json", "stylelint.config.js",
+
+    # Tailwind / PostCSS / CSS
+    "tailwind.config.js", "postcss.config.js", "babel.config.js", ".babelrc", ".babelrc.js",
+
+    # HTML & meta
+    "index.html", "favicon.ico", "robots.txt", "sitemap.xml",
+
+    # General dotfiles & environment
+    ".editorconfig", ".gitignore", ".gitattributes", ".npmrc", ".nvmrc", ".dockerignore",
+    ".env", ".env.local", ".env.development", ".env.production", ".env.test",
+
+    # Test & coverage
+    "jest.config.js", "jest.config.ts", "karma.conf.js", "mocha.opts", "vitest.config.ts",
+    "cypress.config.js", "cypress.json", ".coveragerc", "tox.ini", "pytest.ini", "setup.cfg",
+
+    # CI/CD & build
+    "vercel.json", "netlify.toml", "now.json", "firebase.json", "azure-pipelines.yml",
+    "Procfile", "Makefile", "Dockerfile", "docker-compose.yml", ".travis.yml",
+    ".circleci/config.yml", ".github/workflows/main.yml", ".gitlab-ci.yml",
+
+    # Docs & community
+    "README.md", "README", "CONTRIBUTING.md", "CHANGELOG.md", "CODEOWNERS",
+    "LICENSE", "LICENSE.md", "SECURITY.md", "SUPPORT.md", "NOTICE", "AUTHORS",
+
+    # Python/ML specific
+    "requirements.txt", "Pipfile", "Pipfile.lock", "pyproject.toml", "setup.py", "MANIFEST.in",
+    "environment.yml", "conda.yml", ".python-version", ".pylintrc",
+    "mypy.ini", "pyrightconfig.json", ".flake8", ".isort.cfg",
+
+    # ML experiment logs & artifacts
+    "mlruns", "dvc.yaml", "dvc.lock", ".dvc", "wandb", ".mlflow", ".mlem", "output.log",
+    "checkpoints", "runs", "events.out.tfevents.*", "tensorboard.log", "lightning_logs",
+
+    # Jupyter / notebooks
+    ".ipynb_checkpoints", "*.ipynb",
+
+    # Misc logs & locks
+    "yarn-error.log", "npm-debug.log", "snapshot.txt", "poetry.lock", "poetry.toml",
+
+    # Cloud & infra
+    "terraform.tf", "terraform.tfvars", "*.tfstate", "*.tfstate.backup",
+    "cloudbuild.yaml", ".helmignore", "Chart.yaml", "values.yaml",
+    "kustomization.yaml", "skaffold.yaml",
+
+    # Mac, Windows system files
+    ".DS_Store", "Thumbs.db", "desktop.ini",
+}
+
+# Markers that indicate virtual environments
+VENV_MARKERS = {"bin", "lib", "pyvenv.cfg", "Scripts", "Include"}
+
 def detect_language(file_name: str):
     for lang, extensions in LANGUAGE_EXTENSIONS.items():
         if any(file_name.endswith(ext) for ext in extensions):
             return lang
     return None
-
 
 def extract_names(source_code: str, lang_key: str):
     language = Language(LANGUAGE_MAP.get(lang_key))
@@ -94,12 +164,35 @@ def extract_names(source_code: str, lang_key: str):
 
     return found_names
 
+def is_virtual_env(folder_path: str) -> bool:
+    try:
+        entries = set(os.listdir(folder_path))
+        return bool(entries & VENV_MARKERS)
+    except Exception:
+        return False
 
 def walk_folder(base_path: str):
     structure = {}
 
-    for root, _, files in os.walk(base_path):
+    for root, dirs, files in os.walk(base_path):
+        # Remove unwanted dirs
+        filtered_dirs = []
+        for d in dirs:
+            d_path = os.path.join(root, d)
+            if d in EXCLUDED_FOLDERS:
+                continue
+            if is_virtual_env(d_path):
+                print(f"Skipping virtual environment folder: {d_path}")
+                continue
+            filtered_dirs.append(d)
+
+        # Update dirs in place so os.walk does not traverse excluded dirs
+        dirs[:] = filtered_dirs
+
         for file in files:
+            if file in EXCLUDED_FILES:
+                continue
+
             file_path = os.path.join(root, file)
             rel_path = os.path.relpath(file_path, base_path)
 
@@ -123,16 +216,16 @@ def walk_folder(base_path: str):
                 "contains": contains
             }
 
+
     return structure
 
-
-def parse_code(state: DocGenState) -> DocGenState:
+def parse_code(state: DocGenState):
     all_parsed = {}
 
     working_dir = state.working_dir
-    print(working_dir)
+    print(f"Parsing code from: {working_dir}")
 
-    if isinstance(working_dir, dict):  # Zip structure
+    if isinstance(working_dir, dict):
         for section, path in working_dir.items():
             parsed = walk_folder(path)
             if parsed:

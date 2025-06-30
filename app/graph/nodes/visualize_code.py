@@ -1,6 +1,25 @@
 from app.models.state import DocGenState
 from app.utils.mistral import get_llm_response_commenting
 import re
+import random
+import time
+
+def safe_llm_call(prompt: str, max_retries: int = 5, base_wait: float = 2.0) -> str:
+    """
+    Calls the LLM with retries and exponential backoff + jitter.
+    """
+    for attempt in range(max_retries):
+        try:
+            return get_llm_response_commenting(prompt).strip()
+        except Exception as e:
+            wait_time = base_wait * (2 ** attempt) + random.uniform(0, 1)
+            if "429" in str(e) or "rate limit" in str(e).lower():
+                print(f"Rate limit or transient error. Retrying in {wait_time:.1f}s... (Attempt {attempt+1}/{max_retries})")
+                time.sleep(wait_time)
+            else:
+                print(f"LLM call failed: {e}")
+                raise
+    raise RuntimeError("LLM call failed after maximum retries.")
 
 def visualize_code_node(state: DocGenState) -> DocGenState:
     if not state.working_dir:
@@ -46,9 +65,11 @@ graph TD
 Now generate the Mermaid diagram strictly based on the provided paths.
 """
 
-    # Get the response
-    response = get_llm_response_commenting(prompt=prompt)
-    raw_content = response.content if hasattr(response, "content") else response
+    try:
+        raw_content = safe_llm_call(prompt)
+    except Exception as e:
+        print(f"Error generating Mermaid diagram: {e}")
+        return state
 
     # Remove <think> blocks
     cleaned_content = re.sub(r"<think>.*?</think>", "", raw_content, flags=re.DOTALL).strip()

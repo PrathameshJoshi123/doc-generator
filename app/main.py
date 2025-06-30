@@ -32,6 +32,7 @@ async def generate_docs(
     input_data: str = Form(None),
     zip_file: UploadFile = File(None)
 ):
+    print("/generate")
     # Handle zip upload
     if input_type == "zip" and zip_file:
         content = await zip_file.read()

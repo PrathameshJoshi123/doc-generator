@@ -3,6 +3,7 @@ import re
 import time
 from app.models.state import DocGenState
 from app.utils.mistral import get_llm_response_commenting
+import random
 
 CHUNK_SIZE = 300
 CHUNK_OVERLAP = 10
@@ -39,22 +40,22 @@ Start your output directly with the modified code.
 """
     return prompt
 
-def safe_llm_call(prompt: str, retries: int = 3, delay: int = 60) -> str:
+def safe_llm_call(prompt: str, max_retries: int = 5, base_wait: float = 2.0) -> str:
     """
-    Calls the LLM with retry logic for rate limiting.
-    Retries on 429 or transient errors.
+    Calls the LLM with retries and exponential backoff + jitter for rate limiting or transient errors.
     """
-    for attempt in range(1, retries + 1):
+    for attempt in range(max_retries):
         try:
             return get_llm_response_commenting(prompt).strip()
         except Exception as e:
-            if "429" in str(e):
-                print(f"Rate limit hit (429). Waiting {delay} seconds... (Attempt {attempt}/{retries})")
-                time.sleep(delay)
+            wait_time = base_wait * (2 ** attempt) + random.uniform(0, 1)
+            if "429" in str(e) or "rate limit" in str(e).lower():
+                print(f"Rate limit hit or transient error. Retrying in {wait_time:.1f}s... (Attempt {attempt+1}/{max_retries})")
+                time.sleep(wait_time)
             else:
                 print(f"LLM call failed: {e}")
                 raise
-    raise Exception("Max retries reached for LLM call.")
+    raise RuntimeError("LLM call failed after maximum retries.")
 
 def remove_think_blocks(text: str) -> str:
     """
