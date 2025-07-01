@@ -37,8 +37,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-gray-800 pt-6 sm:pt-8 text-center text-sm sm:text-base text-gray-400">
           <p className="px-4">
-            &copy; 2025 DocGen. All rights reserved. Built with ❤️ for
-            developers who value great documentation.
+            &copy; 2025 DocGen. All rights reserved. Made by Team ByteBlazers with ❤️
           </p>
         </div>
       </div>
