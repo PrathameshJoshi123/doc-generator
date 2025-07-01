@@ -53,6 +53,7 @@ const GeneratePage = () => {
   const [injectComments, setInjectComments] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState("");
   const navigate = useNavigate();
+  const [repo, setRepo] = useState("");
 
   const apiURL = import.meta.env.VITE_API_URL
 
@@ -124,7 +125,8 @@ const GeneratePage = () => {
       if (injectComments && result.download_url) {
         setDownloadUrl(result.download_url);
       }
-
+      setRepo(repoUrl);
+      console.log("inside handleGenerateDocs", repo)
       setMarkdownContent(result.readme);
       setProjectStructure(result.visuals.folder_structure_mermaid);
       setHasGenerated(true);
@@ -237,7 +239,7 @@ const GeneratePage = () => {
                 )}
 
                 {activeTab === "preview" && (
-                  <MarkdownPreview markdownContent={markdownContent} />
+                  <MarkdownPreview markdownContent={markdownContent} repo={repo} />
                 )}
 
                 {activeTab === "structure" && (

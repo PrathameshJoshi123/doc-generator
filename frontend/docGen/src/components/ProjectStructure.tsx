@@ -78,11 +78,11 @@ export const ProjectStructure: React.FC<ProjectStructureProps> = ({
   };
 
   const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev * 1.2, 7));
+    setZoom(prev => Math.min(prev * 1.2, 20));
   };
 
   const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev / 1.2, 0.7));
+    setZoom(prev => Math.max(prev / 1.2, 2));
   };
 
   const handleReset = () => {

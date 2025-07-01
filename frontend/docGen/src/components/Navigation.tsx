@@ -1,5 +1,6 @@
 import React from 'react';
 import { FileText, Menu, X, Moon, Sun } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface NavigationProps {
   scrollY: number;
@@ -30,8 +31,8 @@ const Navigation: React.FC<NavigationProps> = ({
       <div className="max-w-7xl mx-auto px-2 xs:px-3 sm:px-4 md:px-8 lg:px-12">
         <div className="flex items-center justify-between h-12 xs:h-14 sm:h-16 md:h-18">
           {/* Logo Section */}
-          <a
-            href="#"
+          <Link
+            to="/"
             className="flex items-center space-x-1 xs:space-x-2 sm:space-x-3 group flex-shrink-0 min-w-0"
             aria-label="DocGen Home"
           >
@@ -41,7 +42,7 @@ const Navigation: React.FC<NavigationProps> = ({
             <span className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors duration-200 truncate">
               DocGen
             </span>
-          </a>
+          </Link>
           
           {/* Desktop & Tablet Navigation + Controls */}
           <div className="flex items-center space-x-1 xs:space-x-2 sm:space-x-3 md:space-x-4 flex-shrink-0">
