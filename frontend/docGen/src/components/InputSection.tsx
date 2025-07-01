@@ -7,6 +7,8 @@ import {
   Zap,
   Loader2,
 } from "lucide-react";
+import { BranchSelector } from "./BranchSelector";
+import { useGitHubBranches } from '../hooks/useGithubBranches';
 
 interface InputSectionProps {
   inputType: string;
@@ -19,6 +21,8 @@ interface InputSectionProps {
   setInjectComments: (value: boolean) => void;
   handleGenerateDocs: () => void;
   isLoading: boolean;
+  selectedBranch: string;
+  setSelectedBranch: (branch: string) => void;
 }
 
 export const InputSection: React.FC<InputSectionProps> = ({
@@ -32,7 +36,15 @@ export const InputSection: React.FC<InputSectionProps> = ({
   setInjectComments,
   handleGenerateDocs,
   isLoading,
+  selectedBranch,
+  setSelectedBranch,
 }) => {
+  const { branches, isLoading: branchesLoading, error, repoInfo, refetch } = useGitHubBranches(
+    inputType === "github" ? repoUrl : ""
+  );
+
+  const shouldShowBranchSelector = inputType === "github" && repoInfo.isValid;
+
   return (
     <div className="bg-gray-900/40 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-cyan-500/10 shadow-2xl shadow-cyan-500/5">
       {/* Input Type Selector */}
@@ -70,18 +82,33 @@ export const InputSection: React.FC<InputSectionProps> = ({
       {/* Input Fields */}
       <div className="space-y-4 sm:space-y-6">
         <div className="flex flex-col xl:flex-row gap-4 sm:gap-6">
-          <div className="flex-1">
+          <div className="flex-1 space-y-4">
             {inputType === "github" ? (
-              <div className="relative group">
-                <input
-                  type="url"
-                  value={repoUrl}
-                  onChange={(e) => setRepoUrl(e.target.value)}
-                  placeholder="https://github.com/username/repository"
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base lg:text-lg backdrop-blur-sm border bg-white/5 border-gray-600 text-white placeholder-gray-400 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all duration-300 hover:border-cyan-500/50 group-hover:shadow-lg group-hover:shadow-cyan-500/10"
-                />
-                <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-              </div>
+              <>
+                <div className="relative group">
+                  <input
+                    type="url"
+                    value={repoUrl}
+                    onChange={(e) => setRepoUrl(e.target.value)}
+                    placeholder="https://github.com/username/repository"
+                    className="w-full px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base lg:text-lg backdrop-blur-sm border bg-white/5 border-gray-600 text-white placeholder-gray-400 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all duration-300 hover:border-cyan-500/50 group-hover:shadow-lg group-hover:shadow-cyan-500/10"
+                  />
+                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+                
+                {/* Branch Selector */}
+                {shouldShowBranchSelector && (
+                  <BranchSelector
+                    branches={branches}
+                    selectedBranch={selectedBranch}
+                    onBranchSelect={setSelectedBranch}
+                    isLoading={branchesLoading}
+                    error={error}
+                    onRefresh={refetch}
+                    disabled={isLoading}
+                  />
+                )}
+              </>
             ) : (
               <div className="relative group">
                 <div className="w-full px-4 sm:px-6 py-3 sm:py-4 backdrop-blur-sm border bg-white/5 border-gray-600 rounded-xl sm:rounded-2xl transition-all duration-300 hover:border-cyan-500/50 group-hover:shadow-lg group-hover:shadow-cyan-500/10 cursor-pointer">
@@ -131,6 +158,31 @@ export const InputSection: React.FC<InputSectionProps> = ({
             )}
           </button>
         </div>
+
+        {/* Repository Info */}
+        {shouldShowBranchSelector && (
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50">
+            <div className="flex items-center space-x-3 text-sm text-gray-300">
+              <div className="flex items-center space-x-2">
+                <span className="text-gray-400">Repository:</span>
+                <span className="font-mono text-cyan-400">
+                  {repoInfo.owner}/{repoInfo.repo}
+                </span>
+              </div>
+              {selectedBranch && (
+                <>
+                  <span className="text-gray-500">•</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-gray-400">Branch:</span>
+                    <span className="font-mono text-blue-400">{selectedBranch}</span>
+                  </div>
+                </>
+              )}
+              <span className="text-gray-500">•</span>
+              <span className="text-green-400">{branches.length} branches found</span>
+            </div>
+          </div>
+        )}
 
         {/* Toggle Switch */}
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4 pt-3 sm:pt-4 border-t border-gray-700/50">

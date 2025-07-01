@@ -24,6 +24,10 @@ import {
   FolderTree,
   File,
   Folder,
+  ChevronDown,
+  GitBranch,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import Navigation from "./Navigation";
 import { InputSection } from "../components/InputSection";
@@ -39,6 +43,7 @@ const GeneratePage = () => {
   const [scrollY, setScrollY] = useState(0);
   const [inputType, setInputType] = useState("github");
   const [repoUrl, setRepoUrl] = useState("");
+  const [selectedBranch, setSelectedBranch] = useState("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
@@ -49,7 +54,7 @@ const GeneratePage = () => {
   const [downloadUrl, setDownloadUrl] = useState("");
   const navigate = useNavigate();
 
-  const apiURL = import.meta.env.VITE_API_URL;
+  const apiURL = import.meta.env.VITE_API_URL
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -96,6 +101,7 @@ const GeneratePage = () => {
       if (repoUrl && !uploadedFile) {
         formData.append("input_type", "github");
         formData.append("input_data", repoUrl);
+        formData.append("branch", selectedBranch);
       } else if (uploadedFile && !repoUrl) {
         formData.append("input_type", "zip");
         formData.append("zip_file", uploadedFile);
@@ -204,6 +210,8 @@ const GeneratePage = () => {
               setInjectComments={setInjectComments}
               handleGenerateDocs={handleGenerateDocs}
               isLoading={isLoading}
+              selectedBranch={selectedBranch}
+              setSelectedBranch={setSelectedBranch}
             />
           </div>
         </div>
