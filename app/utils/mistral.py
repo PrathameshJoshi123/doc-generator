@@ -7,12 +7,12 @@ dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
 
-llm_summary = init_chat_model(
-    model="qwen-qwq-32b",
-    model_provider="groq",
-    temperature=0.1,               # recommended from Qwen docs
-    reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
-)
+# llm_summary = init_chat_model(
+#     model="qwen-qwq-32b",
+#     model_provider="groq",
+#     temperature=0.1,               # recommended from Qwen docs
+#     reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
+# )
 llm_readme = init_chat_model(
     model="qwen-qwq-32b",
     model_provider="groq",
@@ -20,10 +20,27 @@ llm_readme = init_chat_model(
     reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
 )
 
+# llm_commenting = init_chat_model(
+#     model="deepseek-r1-distill-llama-70b",
+#     model_provider="groq",
+#     temperature=0.6
+# )
+
+llm_summary = init_chat_model(
+    model="codestral-2405",
+    model_provider="mistralai",
+    temperature=0.3,             
+)
+# llm_readme = init_chat_model(
+#     model="codestral-2501",
+#     model_provider="mistralai",
+#     temperature=0.3,       
+# )
+
 llm_commenting = init_chat_model(
-    model="deepseek-r1-distill-llama-70b",
-    model_provider="groq",
-    temperature=0.6
+    model="codestral-2405",
+    model_provider="mistralai",
+    temperature=0.3
 )
 
 parser = StrOutputParser()

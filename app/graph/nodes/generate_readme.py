@@ -324,45 +324,51 @@ Generate only a **Code Summary** section in markdown based on these summaries. D
 You are an expert technical writer. Generate a comprehensive, professional README.md in raw Markdown format for any given codebase.
 
 CRITICAL INSTRUCTIONS:
-- Analyze the provided code summaries to understand what this codebase contains
-- Create a meaningful project title based on the actual code content and purpose
-- Be precise and factual - only use information from the summaries provided
-- Write in clear, professional language suitable for developers
-- Do NOT add code examples, backticks, or wrap your response in markdown blocks
-- Output ONLY the README content in plain markdown format
-- Use appropriate emojis in section headers to make it visually appealing
-- This should work for ANY type of repository (web dev, AI/ML, DSA, mobile apps, etc.)
+
+Analyze the provided code summaries to understand what this codebase contains
+
+Create a meaningful project title based on the actual code content and purpose
+
+Be precise and factual - only use information from the summaries provided
+
+Write in clear, professional language suitable for developers
+
+Do NOT add code examples, backticks, or wrap your response in markdown blocks
+
+Output ONLY the README content in plain markdown format
+
+Use appropriate emojis in section headers to make it visually appealing
+
+This should work for ANY type of repository (web dev, AI/ML, DSA, mobile apps, etc.)
 
 OUTPUT FORMAT:
 
 Start with H1 title based on the code content, followed immediately by a brief description paragraph (no "Project Overview" heading).
 
 Then include these sections with emojis:
-- 🚀 Features (list specific capabilities from summaries)  
-- 🛠 Tech Stack (list technologies mentioned in summaries)
-- 📁 Folder Structure (display the provided structure)
-- 📋 Code Summary (comprehensive overview organized by Core Components, Supporting Modules, Configuration, Additional Features)
-- ⚙ Installation (if and only if installation files mentioned)
-- 🚀 Usage (if and only if usage info available in summaries)  
-- 📝 API Reference (Include **ALL** API only if API endpoints present in summaries)
+
+🚀 Features (list specific capabilities from summaries)
+🛠 Tech Stack (list technologies mentioned in summaries)
+📁 Folder Structure (display the provided structure and provide in md to render it in frontend)
+📋 Code Summary (comprehensive overview organized by Core Components, Supporting Modules, Configuration, Additional Features)
+⚙ Installation (if and only if installation files mentioned)
+🚀 Usage (if and only if usage info available in summaries)
+📝 API Reference (Include ALL API only if API endpoints present in summaries)
 
 For Code Summary, organize with bold subheadings:
-*Core Components, **Supporting Modules, **Configuration and Setup, **Additional Features*
+*Core Components, **Supporting Modules, **Configuration and Setup, *Additional Features
 
-Include file names, key functions/classes, and how components interact based on the summaries provided.
+Describe what each component does clearly in one to two lines, including purpose and how they interact, based on the summaries provided.
 
-IMPORTANT: 
+IMPORTANT:
 Do NOT add any meta-commentary about documentation generation. End naturally after the last relevant section.
 Do NOT give folder structure 2 times only once and complete folder structure.
-If any of the point mentioned above is not applicable dont give it no need to give and wirte not applicable.
+If any of the point mentioned above is not applicable dont give it no need to give and write not applicable.
 
----
-### 📁 Folder Structure:
+📁 Folder Structure:
 {folder_structure}
----
-### 📄 Code Summaries:
+📄 Code Summaries:
 {merged_code_summary}
----
 """
 
     try:

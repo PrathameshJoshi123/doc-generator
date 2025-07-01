@@ -40,8 +40,7 @@ def visualize_code_node(state: DocGenState) -> DocGenState:
     folder_structure = "\n".join(sorted(all_paths))
     print("folder_structure:\n", folder_structure)
 
-    prompt = f"""
-You are a precise and highly disciplined technical assistant.
+    prompt = f"""You are a precise and highly disciplined technical assistant.
 
 Your task: Generate a Mermaid.js diagram using the `graph TD` syntax that exactly matches the folder structure given below.
 
@@ -55,15 +54,18 @@ Folder structure:
 - Do NOT add any comments, explanation, or text before or after the diagram.
 - Output ONLY valid Mermaid code, starting with `graph TD`.
 - Use "Project_Root" as the root node label.
+- For each folder or file, use **only alphanumeric characters, underscores, dots, hyphens, or slashes as they appear in the given paths**.
+- Do NOT use reserved Mermaid keywords (e.g., `graph`, `subgraph`, `end`, `class`, etc.) as node names.
+- If a file or folder name could conflict with Mermaid keywords, wrap the label in square brackets like `[graph/]`.
 
-Example format:
+Format each node like this (example):
 graph TD
     A[Project_Root] --> B[src/]
     B --> C[main.py]
     A --> D[README.md]
 
-Now generate the Mermaid diagram strictly based on the provided paths.
-"""
+Now generate the Mermaid diagram strictly and correctly based on the provided paths."""
+
 
     try:
         raw_content = safe_llm_call(prompt)
