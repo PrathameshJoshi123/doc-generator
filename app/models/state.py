@@ -29,3 +29,5 @@ class DocGenState(BaseModel):
 
     # User customization
     preferences: Optional[DocGenPreferences]
+
+    branch: Optional[str] = None

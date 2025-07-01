@@ -354,6 +354,8 @@ Include file names, key functions/classes, and how components interact based on 
 IMPORTANT: 
 Do NOT add any meta-commentary about documentation generation. End naturally after the last relevant section.
 Do NOT give folder structure 2 times only once and complete folder structure.
+If any of the point mentioned above is not applicable dont give it no need to give and wirte not applicable.
+
 ---
 ### 📁 Folder Structure:
 {folder_structure}

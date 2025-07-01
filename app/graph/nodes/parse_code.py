@@ -1,6 +1,6 @@
 import os
 from app.models.state import DocGenState
-from tree_sitter import Parser, Language
+from tree_sitter import Parser
 
 # Import tree-sitter language bindings
 import tree_sitter_python as tspython
@@ -43,7 +43,6 @@ LANGUAGE_EXTENSIONS = {
     "kotlin": [".kt"],
 }
 
-
 EXCLUDED_FOLDERS = {
     "node_modules", "venv", ".venv", "env", ".env",
     ".git", ".idea", ".vscode", "__pycache__",
@@ -55,7 +54,7 @@ EXCLUDED_FILES = {
     # Node & frontend
     "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb",
     "vite.config.ts", "vite.config.js", "webpack.config.js", "rollup.config.js",
-    "esbuild.config.js", "snowpack.config.js", "metro.config.js", "vite-env.d.ts"
+    "esbuild.config.js", "snowpack.config.js", "metro.config.js", "vite-env.d.ts",
 
     # TypeScript
     "tsconfig.json", "tsconfig.app.json", "tsconfig.node.json", "tsconfig.base.json",
@@ -115,19 +114,45 @@ EXCLUDED_FILES = {
 # Markers that indicate virtual environments
 VENV_MARKERS = {"bin", "lib", "pyvenv.cfg", "Scripts", "Include"}
 
+
 def detect_language(file_name: str):
     for lang, extensions in LANGUAGE_EXTENSIONS.items():
         if any(file_name.endswith(ext) for ext in extensions):
             return lang
     return None
 
-def extract_names(source_code: str, lang_key: str):
-    language = Language(LANGUAGE_MAP.get(lang_key))
-    if not language:
-        return []
 
-    parser = Parser(language)
+def extract_names_and_clean(source_code: str, lang_key: str):
+    language_obj = LANGUAGE_MAP.get(lang_key)
+    if not language_obj:
+        return [], source_code
+
+    parser = Parser()
+    parser.set_language(language_obj)
+
     tree = parser.parse(bytes(source_code, "utf-8"))
+    root_node = tree.root_node
+
+    # Collect comment byte ranges
+    comment_ranges = []
+
+    def collect_comments(node):
+        if "comment" in node.type:
+            comment_ranges.append((node.start_byte, node.end_byte))
+        for child in node.children:
+            collect_comments(child)
+
+    collect_comments(root_node)
+
+    # Remove comments
+    code_bytes = bytearray(source_code, "utf-8")
+    for start, end in sorted(comment_ranges, reverse=True):
+        del code_bytes[start:end]
+
+    cleaned_code = code_bytes.decode("utf-8")
+
+    # Re-parse cleaned code
+    tree = parser.parse(bytes(cleaned_code, "utf-8"))
     root_node = tree.root_node
 
     cursor = root_node.walk()
@@ -151,7 +176,7 @@ def extract_names(source_code: str, lang_key: str):
         ]:
             name_node = node.child_by_field_name("name")
             if name_node:
-                name = source_code[name_node.start_byte:name_node.end_byte]
+                name = cleaned_code[name_node.start_byte:name_node.end_byte]
                 found_names.append(name.strip())
 
         if cursor.goto_first_child():
@@ -162,7 +187,8 @@ def extract_names(source_code: str, lang_key: str):
             if not cursor.goto_parent():
                 break
 
-    return found_names
+    return found_names, cleaned_code
+
 
 def is_virtual_env(folder_path: str) -> bool:
     try:
@@ -170,6 +196,7 @@ def is_virtual_env(folder_path: str) -> bool:
         return bool(entries & VENV_MARKERS)
     except Exception:
         return False
+
 
 def walk_folder(base_path: str):
     structure = {}
@@ -186,7 +213,6 @@ def walk_folder(base_path: str):
                 continue
             filtered_dirs.append(d)
 
-        # Update dirs in place so os.walk does not traverse excluded dirs
         dirs[:] = filtered_dirs
 
         for file in files:
@@ -207,17 +233,17 @@ def walk_folder(base_path: str):
                 print(f"Error reading file {file_path}: {e}")
                 continue
 
-            contains = extract_names(source_code, lang)
+            contains, cleaned_code = extract_names_and_clean(source_code, lang)
 
             structure[rel_path] = {
                 "file": rel_path,
-                "code": source_code,
+                "code": cleaned_code,  # ← Now using cleaned code without comments
                 "type": lang,
                 "contains": contains
             }
 
-
     return structure
+
 
 def parse_code(state: DocGenState):
     all_parsed = {}

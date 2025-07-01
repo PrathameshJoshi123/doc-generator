@@ -30,14 +30,15 @@ def read_root():
 async def generate_docs(
     input_type: str = Form(...),  # "github", "zip", or "upload"
     input_data: str = Form(None),
-    zip_file: UploadFile = File(None)
+    zip_file: UploadFile = File(None),
+    branch: str = Form(None)
 ):
     print("/generate")
     # Handle zip upload
     if input_type == "zip" and zip_file:
         content = await zip_file.read()
         base64_zip = base64.b64encode(content).decode("utf-8")
-        state = DocGenState(input_type="zip", input_data=base64_zip, preferences=DocGenPreferences(
+        state = DocGenState(input_type="zip", input_data=base64_zip,branch=branch, preferences=DocGenPreferences(
         add_inline_comments=False,
         generate_readme=True,
         generate_summary=True,
@@ -45,7 +46,7 @@ async def generate_docs(
     ))
     else:
         # Handle GitHub or pasted upload
-        state = DocGenState(input_type=input_type, input_data=input_data, preferences=DocGenPreferences(
+        state = DocGenState(input_type=input_type, input_data=input_data,branch=branch, preferences=DocGenPreferences(
         add_inline_comments=False,
         generate_readme=True,
         generate_summary=True,
@@ -99,19 +100,20 @@ zip_store = {}
 async def generate_and_download(
     input_type: str = Form(...),
     input_data: str = Form(None),
-    zip_file: UploadFile = File(None)
+    zip_file: UploadFile = File(None),
+    branch: str = Form(None)
 ):
     if input_type == "zip" and zip_file:
         content = await zip_file.read()
         base64_zip = base64.b64encode(content).decode("utf-8")
-        state = DocGenState(input_type="zip", input_data=base64_zip, preferences=DocGenPreferences(
+        state = DocGenState(input_type="zip", input_data=base64_zip,branch=branch, preferences=DocGenPreferences(
         add_inline_comments=True,
         generate_readme=True,
         generate_summary=True,
         visualize_structure=True
     ))
     else:
-        state = DocGenState(input_type=input_type, input_data=input_data, preferences=DocGenPreferences(
+        state = DocGenState(input_type=input_type, input_data=input_data,branch=branch, preferences=DocGenPreferences(
         add_inline_comments=True,
         generate_readme=True,
         generate_summary=True,
