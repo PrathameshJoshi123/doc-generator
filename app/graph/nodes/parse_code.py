@@ -1,6 +1,6 @@
 import os
 from app.models.state import DocGenState
-from tree_sitter import Parser
+from tree_sitter import Language, Parser
 
 # Import tree-sitter language bindings
 import tree_sitter_python as tspython
@@ -127,8 +127,7 @@ def extract_names_and_clean(source_code: str, lang_key: str):
     if not language_obj:
         return [], source_code
 
-    parser = Parser()
-    parser.set_language(language_obj)
+    parser = Parser(Language(language_obj))
 
     tree = parser.parse(bytes(source_code, "utf-8"))
     root_node = tree.root_node

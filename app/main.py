@@ -63,7 +63,7 @@ async def generate_docs(
             "folder_tree": result.get("folder_tree"),
             "input_type": result.get("input_type")
     }
-    print(response)
+    
     
     return {
         "readme": result.get("readme"),

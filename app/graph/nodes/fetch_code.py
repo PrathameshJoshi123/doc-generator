@@ -37,10 +37,10 @@ def fetch_code(state: DocGenState) -> DocGenState:
     custom_clone_path = path
 
     if state.input_type == "github":
-        if state.branch == "None":
-            state.working_dir = {"repo_path": clone_github_repo(state.input_data, custom_clone_path)}
-        else:
+        if state.branch:
             state.working_dir = {"repo_path": clone_github_repo(state.input_data, custom_clone_path, branch=state.branch)}
+        else:
+            state.working_dir = {"repo_path": clone_github_repo(state.input_data, custom_clone_path)}
 
     elif state.input_type == "zip":
         extracted_path = extract_zip_file(state.input_data, custom_clone_path)

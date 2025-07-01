@@ -141,8 +141,12 @@ def parse_llm_summary_response(response: str) -> list[dict]:
 def safe_llm_call(prompt: str, language: str, max_retries=5, base_wait=2.0):
     for attempt in range(max_retries):
         try:
-            return get_llm_response_summary(prompt, language).strip()
+            print("summarizing")
+            sum = get_llm_response_summary(prompt=prompt, language=language)
+            print(sum)
+            return sum.strip()
         except Exception as e:
+            print(e)
             wait_time = base_wait * (2 ** attempt) + random.uniform(0, 1)
             print(f"[Retry] LLM call failed on attempt {attempt+1}: {e}. Retrying in {wait_time:.1f}s...")
             time.sleep(wait_time)
@@ -191,7 +195,6 @@ def summarize_code_node(state: DocGenState) -> DocGenState:
 
     combined_summary = " ".join([s['summary'] for s in all_structured_summaries if s['summary']]).strip()
 
-    print()
     if not state.readme_summaries:
         state.readme_summaries = []
 
@@ -206,7 +209,6 @@ def summarize_code_node(state: DocGenState) -> DocGenState:
         "contains": symbols
     })
 
-    print("state.readme: ", state.readme_summaries)
     state.summaries[file_path] = combined_summary
 
     return state
