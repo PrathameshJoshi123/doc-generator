@@ -38,7 +38,7 @@ llm_summary = init_chat_model(
 # )
 
 llm_commenting = init_chat_model(
-    model="codestral-2405",
+    model="codestral-2501",
     model_provider="mistralai",
     temperature=0.3
 )
