@@ -11,12 +11,12 @@
 - [Live Application](#-live-application)
 - [Technology Stack](#-technology-stack)
 - [Features](#-features)
-- [Screenshots](#-screenshots)
 - [Setup & Installation](#-setup--installation)
 - [Usage Guide](#-usage-guide)
 - [API Documentation](#-api-documentation)
 - [Team](#-team)
 - [Roadmap](#-roadmap)
+- [Screenshots](#-screenshots)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -95,40 +95,6 @@ Try our live demo with sample repositories or upload your own projects to experi
 - **Error Handling**: Robust error management and user feedback
 - **Secure Processing**: Safe handling of code with privacy protection
 
-## 📸 Screenshots
-
-### Landing Page
-![Landing Page](https://via.placeholder.com/800x400/1a1a1a/ffffff?text=DocGen+AI+Landing+Page)
-*Modern, interactive landing page with 3D elements and clear call-to-action*
-
-### Documentation Generation Interface
-![Generation Interface](https://via.placeholder.com/800x400/2563eb/ffffff?text=Generation+Interface)
-*Intuitive interface for inputting repositories and configuring generation options*
-
-### Live Preview & Editor
-![Preview Editor](https://via.placeholder.com/800x400/059669/ffffff?text=Live+Preview+Editor)
-*Real-time markdown preview with editing capabilities*
-
-### Generated Documentation Example
-![Documentation Output](https://via.placeholder.com/800x400/7c3aed/ffffff?text=Generated+Documentation)
-*Professional documentation output with proper formatting and structure*
-
-### Mobile Responsive Design
-![Mobile View](https://via.placeholder.com/400x600/dc2626/ffffff?text=Mobile+Responsive)
-*Fully responsive design optimized for mobile devices*
-
-### Input Options Interface
-![Input Options](https://via.placeholder.com/800x400/f59e0b/ffffff?text=Input+Options)
-*Multiple input methods including GitHub URL and file upload*
-
-### AI Processing Status
-![Processing Status](https://via.placeholder.com/800x400/10b981/ffffff?text=AI+Processing+Status)
-*Real-time status updates during documentation generation*
-
-### Export & Download Options
-![Export Options](https://via.placeholder.com/800x400/8b5cf6/ffffff?text=Export+Options)
-*Various export formats and sharing options for generated documentation*
-
 ## 🚀 Setup & Installation
 
 ### Prerequisites
@@ -138,23 +104,14 @@ Ensure you have the following installed:
 - **Python** (v3.8 or higher) - [Download here](https://python.org/)
 - **Git** - [Download here](https://git-scm.com/)
 
-### Quick Start (Recommended)
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/docgen-ai.git
-cd docgen-ai
-
-# Run the automated setup script
-chmod +x setup.sh
-./setup.sh
-```
-
-### Manual Installation
+### Installation
 
 #### 1. Clone and Setup Backend
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/docgen-ai.git
+
 # Navigate to backend directory
 cd backend
 
@@ -179,9 +136,6 @@ cd frontend/docGen
 
 # Install dependencies
 npm install
-
-# Optional: Install additional development tools
-npm install -g @types/node
 ```
 
 #### 3. Environment Configuration
@@ -191,22 +145,7 @@ Create a `.env` file in the backend directory:
 ```bash
 # Required Configuration
 MISTRAL_API_KEY=your_mistral_api_key_here
-ENVIRONMENT=development
-
-# Optional Configuration
-LLM_MODEL=mistral-large-latest
-MAX_FILE_SIZE_MB=50
-TEMP_DIR=./temp
-CORS_ORIGINS=http://localhost:3000,http://localhost:3001
-
-# Database (if using)
-DATABASE_URL=sqlite:///./docgen.db
-
-# Security
-SECRET_KEY=your-secret-key-here
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-```
+GROQ_API_KEY=your_groq_api_key_here
 
 #### 4. Start the Application
 
@@ -225,60 +164,9 @@ npm start
 
 #### 5. Access the Application
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:8000
 - **API Documentation**: http://localhost:8000/docs
-
-### Docker Installation (Alternative)
-
-```bash
-# Clone repository
-git clone https://github.com/yourusername/docgen-ai.git
-cd docgen-ai
-
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Access at http://localhost:3000
-```
-
-### Troubleshooting Installation
-
-<details>
-<summary>Common Installation Issues</summary>
-
-**Node.js Version Issues:**
-```bash
-# Check Node.js version
-node --version
-
-# If version is too old, use nvm to install latest
-nvm install node
-nvm use node
-```
-
-**Python Virtual Environment Issues:**
-```bash
-# If venv creation fails, try
-python3 -m venv venv
-# or
-virtualenv venv
-```
-
-**Port Already in Use:**
-```bash
-# Find process using port 8000
-lsof -i :8000
-# Kill the process
-kill -9 <PID>
-```
-
-**Missing API Key:**
-- Ensure you have a valid Mistral AI API key
-- Sign up at [Mistral AI](https://mistral.ai/) if you don't have one
-- Add the key to your `.env` file
-
-</details>
 
 ## 📖 Usage Guide
 
@@ -288,54 +176,21 @@ kill -9 <PID>
    - Paste a GitHub repository URL, or
    - Upload a ZIP file containing your project
 
-2. **⚙️ Configure Options**
-   - Select documentation style (Minimal/Standard/Detailed)
-   - Choose comment level (None/Basic/Comprehensive)
-   - Set output preferences
-
-3. **🤖 Generate Documentation**
+2. **🤖 Generate Documentation**
    - Click "Generate Documentation"
    - AI analyzes your code structure
    - Documentation is generated automatically
 
-4. **👀 Review Results**
+3. **👀 Review Results**
    - Use the interactive preview to review generated content
    - Make edits directly in the markdown editor
    - Real-time preview updates as you type
 
-5. **📥 Export Documentation**
+4. **📥 Export Documentation**
    - Download as ZIP file
    - Copy markdown to clipboard
    - Integrate directly into your repository
 
-### Advanced Features
-
-#### Custom Prompts
-Create custom documentation styles by modifying prompt templates:
-
-```python
-custom_prompt = {
-    "style": "technical",
-    "focus": "architecture",
-    "include_examples": True,
-    "target_audience": "senior_developers"
-}
-```
-
-#### Batch Processing
-Process multiple repositories at once:
-
-```bash
-curl -X POST "http://localhost:8000/batch-generate" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "repositories": [
-      "https://github.com/user/repo1",
-      "https://github.com/user/repo2"
-    ],
-    "preferences": {...}
-  }'
-```
 
 ## 📚 API Documentation
 
@@ -343,7 +198,7 @@ curl -X POST "http://localhost:8000/batch-generate" \
 
 #### Generate Documentation
 ```http
-POST /api/v1/generate
+POST /generate
 Content-Type: application/json
 
 {
@@ -356,18 +211,6 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "documentation": "# Generated Documentation\n...",
-  "metadata": {
-    "files_processed": 42,
-    "generation_time": "5.2s",
-    "model_used": "mistral-large-latest"
-  }
-}
-```
 
 #### Generate and Download
 ```http
@@ -383,31 +226,21 @@ Content-Type: application/json
   }
 }
 ```
+## 📸 Screenshots
 
-**Response:**
-```json
-{
-  "download_url": "/api/v1/download-zip/abc123def456",
-  "status": "completed",
-  "expires_at": "2024-01-15T10:30:00Z"
-}
-```
+### Landing Page
+![Landing Page](https://github.com/user-attachments/assets/168a024a-1640-4969-a893-f3c741e10e8a)
+*Modern, interactive landing page with 3D elements and clear call-to-action*
 
-### Authentication (Optional)
+### Documentation Generation Interface
+![Generation Interface](https://github.com/user-attachments/assets/b85026d6-aa05-455e-b4c4-d75fc31b075f)
+*Intuitive interface for inputting repositories and configuring generation options*
 
-For extended usage, API key authentication is available:
+### Live Preview & Editor
+![Markdown Editor](https://github.com/user-attachments/assets/b3bc76d3-0a59-4684-9a65-79354815f930)
+![Markdown Preview](https://github.com/user-attachments/assets/84b4cec7-9acd-4b10-b629-fdcbf054d468)
+*Real-time markdown preview with editing capabilities*
 
-```http
-Authorization: Bearer YOUR_API_KEY
-```
-
-### Rate Limits
-
-| Tier | Requests/Hour | Max File Size |
-|------|---------------|---------------|
-| Free | 10 | 10MB |
-| Pro | 100 | 100MB |
-| Enterprise | Unlimited | 1GB |
 
 ## 👥 Team
 
@@ -416,128 +249,78 @@ Authorization: Bearer YOUR_API_KEY
 <table>
   <tr>
     <td align="center">
-      <img src="https://via.placeholder.com/100x100/4f46e5/ffffff?text=JD" width="100px;" alt="John Doe"/><br />
-      <sub><b>John Doe</b></sub><br />
+      <sub><b>Prathamesh Joshi</b></sub><br />
       <sub>Project Lead & Backend</sub><br />
-      <a href="https://github.com/johndoe">🔗 GitHub</a>
+      <a href="https://github.com/PrathameshJoshi123">🔗 GitHub</a>
     </td>
     <td align="center">
-      <img src="https://via.placeholder.com/100x100/059669/ffffff?text=JS" width="100px;" alt="Jane Smith"/><br />
-      <sub><b>Jane Smith</b></sub><br />
+      <sub><b>Prajwal Kulkarni</b></sub><br />
       <sub>Frontend & UI/UX</sub><br />
-      <a href="https://github.com/janesmith">🔗 GitHub</a>
-    </td>
-    <td align="center">
-      <img src="https://via.placeholder.com/100x100/dc2626/ffffff?text=MJ" width="100px;" alt="Mike Johnson"/><br />
-      <sub><b>Mike Johnson</b></sub><br />
-      <sub>AI/ML Integration</sub><br />
-      <a href="https://github.com/mikejohnson">🔗 GitHub</a>
-    </td>
-    <td align="center">
-      <img src="https://via.placeholder.com/100x100/7c3aed/ffffff?text=SB" width="100px;" alt="Sarah Brown"/><br />
-      <sub><b>Sarah Brown</b></sub><br />
-      <sub>DevOps & Testing</sub><br />
-      <a href="https://github.com/sarahbrown">🔗 GitHub</a>
+      <a href="https://github.com/PrajwalK44">🔗 GitHub</a>
     </td>
   </tr>
 </table>
 
 ### Individual Contributions
 
-#### 👨‍💻 John Doe - Project Lead & Backend Developer
+#### 👨‍💻 Prathamesh Joshi - Project Lead & Backend Developer
 - **Architecture Design**: Designed the overall system architecture and API structure
-- **Backend Development**: Implemented FastAPI server, database models, and core business logic
+- **Backend Development**: Implemented FastAPI server and core business logic
 - **AI Integration**: Integrated Mistral AI and developed prompt engineering strategies
 - **DevOps**: Set up CI/CD pipelines and deployment infrastructure
 - **Code Review**: Maintained code quality standards and conducted peer reviews
 
-#### 🎨 Jane Smith - Frontend Developer & UI/UX Designer
+#### 🎨 Prajwal Kulkarni - Frontend Developer & UI/UX Designer
 - **Frontend Architecture**: Built the React application with TypeScript and modern tooling
 - **UI/UX Design**: Created the modern, interactive user interface with 3D elements
 - **Component Development**: Developed reusable React components and hooks
 - **Responsive Design**: Ensured mobile-first responsive design implementation
 - **User Experience**: Conducted user testing and iterative design improvements
 
-#### 🤖 Mike Johnson - AI/ML Engineer
-- **LLM Integration**: Implemented and optimized language model integrations
-- **Prompt Engineering**: Developed sophisticated prompts for high-quality documentation generation
-- **Model Performance**: Optimized AI model performance and response quality
-- **Code Analysis**: Built intelligent code parsing and analysis algorithms
-- **Research & Development**: Explored new AI techniques and model improvements
+## 🚀 Future Improvements
 
-#### ⚙️ Sarah Brown - DevOps Engineer & QA Lead
-- **Infrastructure**: Set up cloud infrastructure and containerization with Docker
-- **Testing Strategy**: Developed comprehensive testing suite (unit, integration, e2e)
-- **Monitoring**: Implemented logging, monitoring, and error tracking systems
-- **Security**: Established security best practices and vulnerability assessments
-- **Documentation**: Created technical documentation and deployment guides
+### Phase 1: Advanced AI Enhancements
+**🤖 Intelligent Code Analysis & Automation**
+- **Automatic Code Refactoring**: Integrate AI-powered suggestions for code optimization, performance improvements, and best practice adherence
+- **Context-Aware Documentation**: Generate comprehensive docstrings, README files, and technical documentation that understands project context and dependencies
+- **Smart Code Summaries**: Provide intelligent summaries for entire codebases, functions, and complex logic flows
 
-### Acknowledgments
+### Phase 2: Code Quality & Security
+**🔒 Comprehensive Code Assessment**
+- **Static Analysis Integration**: Implement advanced static analysis tools to detect potential vulnerabilities, code smells, and security issues automatically
+- **Security-Focused Auditing**: Add specialized security scanning with detailed vulnerability reports and remediation suggestions
+- **Code Quality Metrics**: Generate comprehensive quality scores with actionable improvement recommendations
 
-Special thanks to:
-- **Mistral AI** for providing excellent language model APIs
-- **Open Source Community** for the amazing tools and libraries
-- **Beta Testers** who provided valuable feedback during development
-- **Contributors** who submitted bug reports and feature requests
+### Phase 3: Visualization Improvements
+**📊 Enhanced Code Understanding**
+- **Interactive Architecture Diagrams**: Generate dynamic system architecture diagrams, dependency trees, and data flow visualizations
+- **Function-Level Call Graphs**: Create detailed function interaction maps and execution flow diagrams
+- **Embedded Interactive Elements**: Add clickable, explorable diagrams directly within documentation and code reviews
 
-## 🗺️ Roadmap
+### Phase 4: Developer Collaboration
+**👥 Team-Centric Features**
+- **Collaborative Documentation**: Enable real-time collaborative editing with commenting and feedback systems for generated documentation
+- **GitHub Integration Enhancement**: Deep integration with GitHub for automated PR comments, inline code annotations, and review workflows
+- **Team Knowledge Sharing**: Create shared repositories of code insights, patterns, and organizational best practices
 
-### Phase 1: Foundation (Completed ✅)
-- [x] Core documentation generation functionality
-- [x] GitHub repository integration
-- [x] Basic web interface
-- [x] Mistral AI integration
-- [x] File upload capabilities
+### Phase 5: Automation & Integration
+**⚙️ Seamless Workflow Integration**
+- **CI/CD Pipeline Integration**: Automate documentation updates through GitHub Actions, GitLab CI, and other popular CI/CD platforms
+- **Auto-Generated Technical Documentation**: Create comprehensive wikis, API documentation, and README files automatically from analyzed codebases
+- **Cross-Platform Integration**: Support for multiple version control systems, project management tools, and development environments
 
-### Phase 2: Enhancement (In Progress 🚧)
-- [x] Interactive 3D UI components
-- [x] Real-time markdown preview
-- [x] Improved code analysis
-- [ ] User authentication system
-- [ ] Advanced customization options
-- [ ] Performance optimizations
+### Advanced Features Pipeline
+**🔮 Next-Generation Capabilities**
+- **Multi-Language Code Analysis**: Expand support beyond current languages to include emerging technologies and frameworks
+- **AI-Powered Code Suggestions**: Provide intelligent code completion and optimization suggestions based on project patterns
+- **Custom Integration APIs**: Allow teams to build custom workflows and integrations tailored to their specific development processes
+- **Performance Analytics**: Track code quality improvements over time with detailed metrics and trend analysis
+- **Enterprise Security Features**: Add advanced authentication, audit logging, and compliance reporting for enterprise environments
 
-### Phase 3: Advanced Features (Q2 2024 📅)
-- [ ] **Multi-LLM Support**: Integration with OpenAI GPT-4, Anthropic Claude, and Google Bard
-- [ ] **IDE Integrations**: VS Code, IntelliJ IDEA, and Sublime Text extensions
-- [ ] **Advanced Code Analysis**: Dependency mapping, code complexity analysis
-- [ ] **Team Collaboration**: Shared workspaces, review workflows, version control
-- [ ] **Custom Templates**: User-defined documentation templates and styles
-- [ ] **API Rate Limiting**: Tiered access with usage analytics
+This roadmap focuses on transforming the platform from a documentation tool into a comprehensive AI-powered development assistant that enhances every aspect of the software development lifecycle.
 
-### Phase 4: Enterprise Features (Q3 2024 📅)
-- [ ] **Self-Hosted Solutions**: On-premises deployment options
-- [ ] **Enterprise Security**: SSO, RBAC, audit logging
-- [ ] **Advanced Analytics**: Usage insights, code quality metrics
-- [ ] **Bulk Processing**: Large-scale repository processing
-- [ ] **Integration APIs**: Webhook support, third-party integrations
-- [ ] **White-Label Solutions**: Customizable branding options
-
-### Phase 5: Innovation (Q4 2024 📅)
-- [ ] **AI-Powered Code Review**: Automated code review with suggestions
-- [ ] **Documentation Maintenance**: Auto-update docs when code changes
-- [ ] **Multi-Language Support**: Support for 20+ programming languages
-- [ ] **Visual Documentation**: Automatic diagram generation (flowcharts, UML)
-- [ ] **Voice Interface**: Voice-powered documentation generation
-- [ ] **Mobile Applications**: Native iOS and Android apps
-
-### Long-term Vision (2025+)
-- **AI Code Assistant**: Complete development workflow automation
-- **Educational Platform**: Interactive coding tutorials from documentation
-- **Open Source Ecosystem**: Plugin marketplace and community contributions
-- **Research & Development**: Academic partnerships for cutting-edge AI research
-
-### Community Requested Features
-Vote on upcoming features in our [GitHub Discussions](https://github.com/yourusername/docgen-ai/discussions):
-
-1. **JetBrains IDEs Integration** (89 votes) 🔥
-2. **Docker Container Documentation** (67 votes)
-3. **API Schema Generation** (54 votes)
-4. **Confluence Integration** (43 votes)
-5. **Slack Bot Integration** (38 votes)
 
 ## 🤝 Contributing
-
 We welcome contributions from developers of all skill levels! Here's how you can help make DocGen AI even better.
 
 ### Ways to Contribute
@@ -557,53 +340,6 @@ We welcome contributions from developers of all skill levels! Here's how you can
 5. **Commit changes**: `git commit -m 'Add amazing feature'`
 6. **Push to branch**: `git push origin feature/amazing-feature`
 7. **Open a Pull Request**: Describe your changes
-
-### Development Guidelines
-
-- **Code Style**: We use Black for Python and Prettier for JavaScript/TypeScript
-- **Testing**: Maintain >90% test coverage
-- **Documentation**: Update docs for any API changes
-- **Commit Messages**: Use conventional commit format
-
-### Recognition
-
-Contributors are recognized in our:
-- 📋 [Contributors List](CONTRIBUTORS.md)
-- 🏆 Monthly contributor highlights
-- 🎁 Special swag for significant contributions
-
-## 📄 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-### What this means:
-- ✅ Commercial use allowed
-- ✅ Modification allowed
-- ✅ Distribution allowed
-- ✅ Private use allowed
-- ❌ Liability and warranty not provided
-
-## 📞 Support & Contact
-
-### Getting Help
-
-- 📖 **Documentation**: Check our [comprehensive docs](https://docs.docgen-ai.com)
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/yourusername/docgen-ai/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/docgen-ai/discussions)
-- 📧 **Email**: support@docgen-ai.com
-- 💬 **Discord**: [Join our community](https://discord.gg/docgen-ai)
-
-### Professional Support
-
-For enterprise clients, we offer:
-- Priority support with SLA guarantees
-- Custom feature development
-- On-site training and consultation
-- Dedicated account management
-
-Contact us at enterprise@docgen-ai.com for more information.
-
----
 
 <div align="center">
 
