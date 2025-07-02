@@ -58,7 +58,7 @@ Try our live demo with sample repositories or upload your own projects to experi
 | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white) | Backend Language | 3.8+ |
 | ![Mistral AI](https://img.shields.io/badge/Mistral_AI-FF6B35?style=flat&logo=ai&logoColor=white) | LLM Integration | Latest |
 | ![Uvicorn](https://img.shields.io/badge/Uvicorn-0C4B33?style=flat&logo=gunicorn&logoColor=white) | ASGI Server | 0.23+ |
-
+| ![Langgraph](https://img.shields.io/badge/LangGraph-0.4.9-green?style=flat-square) | Agentic Workflow | 0.4.9 |
 ### Development & Deployment
 | Tool | Purpose |
 |------|---------|
