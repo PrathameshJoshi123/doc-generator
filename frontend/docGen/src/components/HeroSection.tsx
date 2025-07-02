@@ -86,7 +86,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ handleNavigate }) => {
               </div>
             </button>
 
-            <button className="px-4 xs:px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-sm xs:text-base sm:text-lg font-semibold border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-full">
+            <button onClick={() =>
+                window.open(
+                  "https://youtu.be/URkMKGPIsug",
+                  "_blank",
+                  "noopener,noreferrer"
+                )
+              } className="px-4 xs:px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-sm xs:text-base sm:text-lg font-semibold border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-full">
               View Demo
             </button>
           </div>
