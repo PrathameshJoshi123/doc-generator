@@ -7,17 +7,17 @@
 
 ## 📋 Table of Contents
 
-- [Project Overview](#-project-overview)
-- [Live Application](#-live-application)
-- [Technology Stack](#-technology-stack)
-- [Features](#-features)
-- [Setup & Installation](#-setup--installation)
-- [Usage Guide](#-usage-guide)
-- [API Documentation](#-api-documentation)
-- [Screenshots](#-screenshots)
-- [Team](#-team)
-- [Roadmap](#-roadmap)
-- [Contributing](#-contributing)
+- [🎯 Project Overview](#-project-overview)
+- [🌐 Live Application](#-live-application)
+- [🛠️ Technology Stack](#️-technology-stack)
+- [✨ Features](#-features)
+- [🚀 Setup & Installation](#-setup--installation)
+- [📖 Usage Guide](#-usage-guide)
+- [📚 API Documentation](#-api-documentation)
+- [📸 Screenshots](#-screenshots)
+- [👥 Team](#-team)
+- [🚀 Future Improvements](#-future-improvements)
+- [🤝 Contributing](#-contributing)
 
 ## 🎯 Project Overview
 
