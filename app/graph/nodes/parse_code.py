@@ -2,7 +2,6 @@ import os
 from app.models.state import DocGenState
 from tree_sitter import Language, Parser
 
-# Import tree-sitter language bindings
 import tree_sitter_python as tspython
 import tree_sitter_java as tsjava
 import tree_sitter_javascript as tsjs
@@ -14,7 +13,6 @@ import tree_sitter_cpp as tscpp
 import tree_sitter_go as tsgo
 import tree_sitter_kotlin as tskotlin
 
-# Language registry
 LANGUAGE_MAP = {
     "python": tspython.language(),
     "java": tsjava.language(),
@@ -51,69 +49,37 @@ EXCLUDED_FOLDERS = {
 }
 
 EXCLUDED_FILES = {
-    # Node & frontend
     "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb",
     "vite.config.ts", "vite.config.js", "webpack.config.js", "rollup.config.js",
     "esbuild.config.js", "snowpack.config.js", "metro.config.js", "vite-env.d.ts",
-
-    # TypeScript
     "tsconfig.json", "tsconfig.app.json", "tsconfig.node.json", "tsconfig.base.json",
-    "tslint.json",
-
-    # Linters & formatters
-    "eslint.config.js", ".eslintrc.js", ".eslintrc.json", ".prettierrc", ".prettierrc.js",
+    "tslint.json", "eslint.config.js", ".eslintrc.js", ".eslintrc.json", ".prettierrc", ".prettierrc.js",
     ".prettierrc.json", ".stylelintrc", ".stylelintrc.json", "stylelint.config.js",
-
-    # Tailwind / PostCSS / CSS
     "tailwind.config.js", "postcss.config.js", "babel.config.js", ".babelrc", ".babelrc.js",
-
-    # HTML & meta
     "index.html", "favicon.ico", "robots.txt", "sitemap.xml",
-
-    # General dotfiles & environment
     ".editorconfig", ".gitignore", ".gitattributes", ".npmrc", ".nvmrc", ".dockerignore",
     ".env", ".env.local", ".env.development", ".env.production", ".env.test",
-
-    # Test & coverage
     "jest.config.js", "jest.config.ts", "karma.conf.js", "mocha.opts", "vitest.config.ts",
     "cypress.config.js", "cypress.json", ".coveragerc", "tox.ini", "pytest.ini", "setup.cfg",
-
-    # CI/CD & build
     "vercel.json", "netlify.toml", "now.json", "firebase.json", "azure-pipelines.yml",
     "Procfile", "Makefile", "Dockerfile", "docker-compose.yml", ".travis.yml",
     ".circleci/config.yml", ".github/workflows/main.yml", ".gitlab-ci.yml",
-
-    # Docs & community
     "README.md", "README", "CONTRIBUTING.md", "CHANGELOG.md", "CODEOWNERS",
     "LICENSE", "LICENSE.md", "SECURITY.md", "SUPPORT.md", "NOTICE", "AUTHORS",
-
-    # Python/ML specific
     "requirements.txt", "Pipfile", "Pipfile.lock", "pyproject.toml", "setup.py", "MANIFEST.in",
     "environment.yml", "conda.yml", ".python-version", ".pylintrc",
     "mypy.ini", "pyrightconfig.json", ".flake8", ".isort.cfg",
-
-    # ML experiment logs & artifacts
     "mlruns", "dvc.yaml", "dvc.lock", ".dvc", "wandb", ".mlflow", ".mlem", "output.log",
     "checkpoints", "runs", "events.out.tfevents.*", "tensorboard.log", "lightning_logs",
-
-    # Jupyter / notebooks
     ".ipynb_checkpoints", "*.ipynb",
-
-    # Misc logs & locks
     "yarn-error.log", "npm-debug.log", "snapshot.txt", "poetry.lock", "poetry.toml",
-
-    # Cloud & infra
     "terraform.tf", "terraform.tfvars", "*.tfstate", "*.tfstate.backup",
     "cloudbuild.yaml", ".helmignore", "Chart.yaml", "values.yaml",
     "kustomization.yaml", "skaffold.yaml",
-
-    # Mac, Windows system files
     ".DS_Store", "Thumbs.db", "desktop.ini",
 }
 
-# Markers that indicate virtual environments
 VENV_MARKERS = {"bin", "lib", "pyvenv.cfg", "Scripts", "Include"}
-
 
 def detect_language(file_name: str):
     for lang, extensions in LANGUAGE_EXTENSIONS.items():
@@ -121,18 +87,15 @@ def detect_language(file_name: str):
             return lang
     return None
 
-
 def extract_names_and_clean(source_code: str, lang_key: str):
     language_obj = LANGUAGE_MAP.get(lang_key)
     if not language_obj:
         return [], source_code
 
     parser = Parser(Language(language_obj))
-
     tree = parser.parse(bytes(source_code, "utf-8"))
     root_node = tree.root_node
 
-    # Collect comment byte ranges
     comment_ranges = []
 
     def collect_comments(node):
@@ -143,14 +106,11 @@ def extract_names_and_clean(source_code: str, lang_key: str):
 
     collect_comments(root_node)
 
-    # Remove comments
     code_bytes = bytearray(source_code, "utf-8")
     for start, end in sorted(comment_ranges, reverse=True):
         del code_bytes[start:end]
 
     cleaned_code = code_bytes.decode("utf-8")
-
-    # Re-parse cleaned code
     tree = parser.parse(bytes(cleaned_code, "utf-8"))
     root_node = tree.root_node
 
@@ -188,7 +148,6 @@ def extract_names_and_clean(source_code: str, lang_key: str):
 
     return found_names, cleaned_code
 
-
 def is_virtual_env(folder_path: str) -> bool:
     try:
         entries = set(os.listdir(folder_path))
@@ -196,12 +155,10 @@ def is_virtual_env(folder_path: str) -> bool:
     except Exception:
         return False
 
-
 def walk_folder(base_path: str):
     structure = {}
 
     for root, dirs, files in os.walk(base_path):
-        # Remove unwanted dirs
         filtered_dirs = []
         for d in dirs:
             d_path = os.path.join(root, d)
@@ -236,13 +193,12 @@ def walk_folder(base_path: str):
 
             structure[rel_path] = {
                 "file": rel_path,
-                "code": cleaned_code,  # ← Now using cleaned code without comments
+                "code": cleaned_code,
                 "type": lang,
                 "contains": contains
             }
 
     return structure
-
 
 def parse_code(state: DocGenState):
     all_parsed = {}

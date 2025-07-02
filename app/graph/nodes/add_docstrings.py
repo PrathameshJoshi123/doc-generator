@@ -9,9 +9,6 @@ CHUNK_SIZE = 300
 CHUNK_OVERLAP = 10
 
 def split_code_into_chunks(code: str, lines_per_chunk=CHUNK_SIZE, overlap=CHUNK_OVERLAP) -> list[str]:
-    """
-    Splits code into overlapping chunks based on lines.
-    """
     lines = code.splitlines()
     chunks = []
     for i in range(0, len(lines), lines_per_chunk - overlap):
@@ -20,9 +17,6 @@ def split_code_into_chunks(code: str, lines_per_chunk=CHUNK_SIZE, overlap=CHUNK_
     return chunks
 
 def build_file_prompt(lang: str, chunk_code: str) -> str:
-    """
-    Builds a prompt asking to add comments/docstrings where necessary to clarify logic.
-    """
     prompt = f"""You are a highly skilled, professional {lang} developer.
 
 Your task: Add clear, concise, professional docstrings or inline comments to the following code wherever they are needed to clarify purpose, behavior, and improve understanding.
@@ -41,9 +35,6 @@ Start your output directly with the modified code.
     return prompt
 
 def safe_llm_call(prompt: str, max_retries: int = 5, base_wait: float = 2.0) -> str:
-    """
-    Calls the LLM with retries and exponential backoff + jitter for rate limiting or transient errors.
-    """
     for attempt in range(max_retries):
         try:
             return get_llm_response_commenting(prompt).strip()
@@ -58,16 +49,9 @@ def safe_llm_call(prompt: str, max_retries: int = 5, base_wait: float = 2.0) -> 
     raise RuntimeError("LLM call failed after maximum retries.")
 
 def remove_think_blocks(text: str) -> str:
-    """
-    Removes <think>...</think> blocks from text.
-    """
     return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
 
 def add_docstrings(state: DocGenState) -> DocGenState:
-    """
-    Adds inline docstrings to all functions and classes in a single file by chunking full file code.
-    Stores updated code in state.modified_files without overwriting other entries.
-    """
     print("Inside DocStrings")
 
     if not state.preferences.add_inline_comments or not state.parsed_data:
@@ -100,11 +84,9 @@ def add_docstrings(state: DocGenState) -> DocGenState:
 
     final_code = "\n\n".join(updated_chunks)
 
-    # Ensure we don't overwrite other modified files
     if not state.modified_files:
         state.modified_files = {}
 
     state.modified_files[file_path] = final_code
 
     return state
-

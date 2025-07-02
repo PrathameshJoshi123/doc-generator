@@ -6,36 +6,18 @@ import os
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
-
-# llm_summary = init_chat_model(
-#     model="qwen-qwq-32b",
-#     model_provider="groq",
-#     temperature=0.1,               # recommended from Qwen docs
-#     reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
-# )
 llm_readme = init_chat_model(
     model="qwen-qwq-32b",
     model_provider="groq",
-    temperature=0.1,           # low for deterministic summaries               # recommended from Qwen docs
-    reasoning_format="parsed"  # strongly recommended to avoid chain-of-thought leaks
+    temperature=0.1,
+    reasoning_format="parsed"
 )
-
-# llm_commenting = init_chat_model(
-#     model="deepseek-r1-distill-llama-70b",
-#     model_provider="groq",
-#     temperature=0.6
-# )
 
 llm_summary = init_chat_model(
     model="codestral-2405",
     model_provider="mistralai",
-    temperature=0.3,             
+    temperature=0.3,
 )
-# llm_readme = init_chat_model(
-#     model="codestral-2501",
-#     model_provider="mistralai",
-#     temperature=0.3,       
-# )
 
 llm_commenting = init_chat_model(
     model="codestral-2501",
@@ -46,16 +28,12 @@ llm_commenting = init_chat_model(
 parser = StrOutputParser()
 
 def get_llm_response_summary(prompt: str, language: str) -> str:
-    """
-    Call Mistral LLM with a prompt string and return plain text output.
-    """
-
     messages = [
         ("system", 
         f"You are a highly skilled senior {language} software engineer. "
         f"Always write precise, technical, and concise output without adding explanations or extra commentary."),
         ("user", prompt)
-        ]
+    ]
     chain = llm_summary | StrOutputParser()
     return chain.invoke(messages)
 
@@ -70,9 +48,7 @@ def get_llm_response_readme(prompt: str) -> str:
     chain = llm_readme | StrOutputParser()
     return chain.invoke(messages)
 
-
 def get_llm_response_commenting(prompt: str) -> str:
-
     messages = [("user", prompt)]
     chain = llm_commenting | StrOutputParser()
     return chain.invoke(messages)

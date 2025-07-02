@@ -5,9 +5,6 @@ import random
 import time
 
 def safe_llm_call(prompt: str, max_retries: int = 5, base_wait: float = 2.0) -> str:
-    """
-    Calls the LLM with retries and exponential backoff + jitter.
-    """
     for attempt in range(max_retries):
         try:
             return get_llm_response_commenting(prompt).strip()
@@ -28,7 +25,6 @@ def visualize_code_node(state: DocGenState) -> DocGenState:
     repo_data = state.parsed_data.get("repo_path", {})
     file_paths = sorted(repo_data.keys())
 
-    # Build all folder and file paths
     all_paths = set()
     for file_path in file_paths:
         parts = file_path.split("/")
@@ -66,27 +62,22 @@ graph TD
 
 Now generate the Mermaid diagram strictly and correctly based on the provided paths."""
 
-
     try:
         raw_content = safe_llm_call(prompt)
     except Exception as e:
         print(f"Error generating Mermaid diagram: {e}")
         return state
 
-    # Remove <think> blocks
     cleaned_content = re.sub(r"<think>.*?</think>", "", raw_content, flags=re.DOTALL).strip()
 
-    # Keep only the part starting from 'graph TD'
     mermaid_start = cleaned_content.find("graph TD")
     if mermaid_start != -1:
         mermaid_code = cleaned_content[mermaid_start:].strip()
     else:
-        mermaid_code = cleaned_content  # fallback if already clean
+        mermaid_code = cleaned_content
 
-    # Explicitly remove any stray backticks
     mermaid_code = mermaid_code.replace("`", "")
 
-    # Store in state
     state.visuals = state.visuals or {}
     state.visuals["folder_structure_mermaid"] = mermaid_code
 

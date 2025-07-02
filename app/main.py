@@ -1,5 +1,3 @@
-# app/main.py
-
 import base64
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,11 +11,9 @@ import json
 app = FastAPI()
 graph = build_graph()
 
-# Optional: allow frontend access if needed
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    #allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -28,43 +24,31 @@ def read_root():
 
 @app.post("/generate")
 async def generate_docs(
-    input_type: str = Form(...),  # "github", "zip", or "upload"
+    input_type: str = Form(...),
     input_data: str = Form(None),
     zip_file: UploadFile = File(None),
     branch: str = Form(None)
 ):
     print("/generate")
-    # Handle zip upload
     if input_type == "zip" and zip_file:
         content = await zip_file.read()
         base64_zip = base64.b64encode(content).decode("utf-8")
-        state = DocGenState(input_type="zip", input_data=base64_zip,branch=branch, preferences=DocGenPreferences(
-        add_inline_comments=False,
-        generate_readme=True,
-        generate_summary=True,
-        visualize_structure=True
-    ))
+        state = DocGenState(input_type="zip", input_data=base64_zip, branch=branch, preferences=DocGenPreferences(
+            add_inline_comments=False,
+            generate_readme=True,
+            generate_summary=True,
+            visualize_structure=True
+        ))
     else:
-        # Handle GitHub or pasted upload
-        state = DocGenState(input_type=input_type, input_data=input_data,branch=branch, preferences=DocGenPreferences(
-        add_inline_comments=False,
-        generate_readme=True,
-        generate_summary=True,
-        visualize_structure=True
-    ))
+        state = DocGenState(input_type=input_type, input_data=input_data, branch=branch, preferences=DocGenPreferences(
+            add_inline_comments=False,
+            generate_readme=True,
+            generate_summary=True,
+            visualize_structure=True
+        ))
 
     result = graph.invoke(state)
 
-    response= {
-        "readme": result.get("readme"),
-            "summaries": result.get("summaries"),
-            "modified_files": result.get("modified_files"),
-            "visuals": result.get("visuals"),
-            "folder_tree": result.get("folder_tree"),
-            "input_type": result.get("input_type")
-    }
-    
-    
     return {
         "readme": result.get("readme"),
         "summaries": result.get("summaries"),
@@ -93,7 +77,6 @@ async def download_modified_zip(modified_files_json: str = Form(...)):
 from fastapi.responses import JSONResponse
 import uuid
 
-# In-memory store (in production, use Redis or a DB)
 zip_store = {}
 
 @app.post("/generate-and-download")
@@ -106,25 +89,24 @@ async def generate_and_download(
     if input_type == "zip" and zip_file:
         content = await zip_file.read()
         base64_zip = base64.b64encode(content).decode("utf-8")
-        state = DocGenState(input_type="zip", input_data=base64_zip,branch=branch, preferences=DocGenPreferences(
-        add_inline_comments=True,
-        generate_readme=True,
-        generate_summary=True,
-        visualize_structure=True
-    ))
+        state = DocGenState(input_type="zip", input_data=base64_zip, branch=branch, preferences=DocGenPreferences(
+            add_inline_comments=True,
+            generate_readme=True,
+            generate_summary=True,
+            visualize_structure=True
+        ))
     else:
-        state = DocGenState(input_type=input_type, input_data=input_data,branch=branch, preferences=DocGenPreferences(
-        add_inline_comments=True,
-        generate_readme=True,
-        generate_summary=True,
-        visualize_structure=True
-    ))
+        state = DocGenState(input_type=input_type, input_data=input_data, branch=branch, preferences=DocGenPreferences(
+            add_inline_comments=True,
+            generate_readme=True,
+            generate_summary=True,
+            visualize_structure=True
+        ))
 
     result = graph.invoke(state)
     modified_files = result.get("modified_files", {})
     readme = result.get("readme")
 
-    # Create ZIP
     zip_stream = io.BytesIO()
     with zipfile.ZipFile(zip_stream, "w", zipfile.ZIP_DEFLATED) as zf:
         for filepath, code in modified_files.items():
@@ -133,11 +115,9 @@ async def generate_and_download(
             zf.writestr("README.md", readme)
     zip_stream.seek(0)
 
-    # Generate a unique download ID
     download_id = str(uuid.uuid4())
-    zip_store[download_id] = zip_stream.getvalue()  # Save raw bytes
+    zip_store[download_id] = zip_stream.getvalue()
 
-    # Return JSON metadata + download URL
     return {
         "download_url": f"/download-zip/{download_id}",
         "readme": result.get("readme"),

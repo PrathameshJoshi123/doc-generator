@@ -8,26 +8,16 @@ class DocGenPreferences(BaseModel):
     visualize_structure: bool
 
 class DocGenState(BaseModel):
-    # Source of input
-    input_type: str  # "github", "zip", "upload"
-    input_data: Union[str, Dict]  # e.g. base64 zip
-
-    # Intermediate paths
-    working_dir: Optional[Dict[str, str]] = None  # {"full": ..., "frontend": ..., "backend": ...}
+    input_type: str
+    input_data: Union[str, Dict]
+    working_dir: Optional[Dict[str, str]] = None
     current_file_path: Optional[str] = None
-
-    # Parsed Output from treesitter
-    parsed_data: Optional[Dict[str, Any]] = None  # rel_path: {functions/classes/etc}
-
-    # AI-generated outputs
-    summaries: Dict[str, str] = Field(default_factory=dict)  # rel_path: summary
-    modified_files: Dict[str, str] = Field(default_factory=dict)  # rel_path: code with injected doc strings
-    folder_tree: Optional[str] = None  # Markdown folder structure
-    readme: Optional[str] = None  # Final generated readme
+    parsed_data: Optional[Dict[str, Any]] = None
+    summaries: Dict[str, str] = Field(default_factory=dict)
+    modified_files: Dict[str, str] = Field(default_factory=dict)
+    folder_tree: Optional[str] = None
+    readme: Optional[str] = None
     visuals: Optional[Dict[str, str]] = None
     readme_summaries: Optional[List[Dict[str, Any]]] = None
-
-    # User customization
     preferences: Optional[DocGenPreferences]
-
     branch: Optional[str] = None
