@@ -14,9 +14,9 @@
 - [Setup & Installation](#-setup--installation)
 - [Usage Guide](#-usage-guide)
 - [API Documentation](#-api-documentation)
+- [Screenshots](#-screenshots)
 - [Team](#-team)
 - [Roadmap](#-roadmap)
-- [Screenshots](#-screenshots)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -345,8 +345,7 @@ We welcome contributions from developers of all skill levels! Here's how you can
 
 **⭐ Star us on GitHub if DocGen AI helps you create better documentation! ⭐**
 
-Made with ❤️ by the DocGen AI team
+Made with ❤️ by Team ByteBlazers
 
-[Website](https://docgen-ai.com) • [Documentation](https://docs.docgen-ai.com) • [Blog](https://blog.docgen-ai.com) • [Twitter](https://twitter.com/docgenai)
 
 </div>
