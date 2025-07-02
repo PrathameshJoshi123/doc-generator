@@ -18,7 +18,6 @@
 - [Team](#-team)
 - [Roadmap](#-roadmap)
 - [Contributing](#-contributing)
-- [License](#-license)
 
 ## 🎯 Project Overview
 
