@@ -16,16 +16,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({ handleNavigate }) => {
   ];
 
   return (
-    <section className="pt-16 xs:pt-20 sm:pt-24 pb-8 xs:pb-12 sm:pb-16 px-1 xs:px-2 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <section className="pt-16 xs:pt-20 sm:pt-24 pb-8 xs:pb-12 sm:pb-16 px-1 xs:px-2 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-b from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto text-center">
-        <div className="mb-6 sm:mb-8 inline-flex items-center space-x-2 bg-blue-100 dark:bg-gray-800 px-3 sm:px-4 py-2 rounded-full">
-          <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 dark:text-yellow-400" />
-          <span className="text-xs sm:text-sm font-medium text-blue-800 dark:text-yellow-200">
+        <div className="mb-6 sm:mb-8 inline-flex items-center space-x-2 bg-gray-800 px-3 sm:px-4 py-2 rounded-full">
+          <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" />
+          <span className="text-xs sm:text-sm font-medium text-yellow-200">
             AI-Powered Documentation Generator
           </span>
         </div>
 
-        <h1 className="text-xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 xs:mb-4 sm:mb-6 text-gray-900 dark:text-white leading-tight px-0 xs:px-1">
+        <h1 className="text-xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 xs:mb-4 sm:mb-6 text-white leading-tight px-0 xs:px-1">
           Transform GitHub Code into
           <br className="hidden sm:block" />
           <span className="block mt-1 xs:mt-2 sm:mt-0">
@@ -34,12 +34,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ handleNavigate }) => {
               delay={150}
               animateBy="words"
               direction="top"
-              className="justify-center text-blue-600 dark:text-blue-400"
+              className="justify-center text-blue-400"
             />
           </span>
         </h1>
 
-        <p className="text-xs xs:text-sm sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-4 xs:mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-1 xs:px-2">
+        <p className="text-xs xs:text-sm sm:text-lg lg:text-xl text-gray-300 mb-4 xs:mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-1 xs:px-2">
           Simply paste a GitHub repository URL and watch as our AI creates
           comprehensive, professional documentation. View code and docs
           side-by-side, then export as markdown.
@@ -92,7 +92,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ handleNavigate }) => {
                   "_blank",
                   "noopener,noreferrer"
                 )
-              } className="px-4 xs:px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-sm xs:text-base sm:text-lg font-semibold border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-full">
+              } className="px-4 xs:px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-sm xs:text-base sm:text-lg font-semibold border-2 border-gray-700 text-gray-200 hover:bg-gray-800 transition-colors w-full">
               View Demo
             </button>
           </div>
@@ -100,11 +100,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ handleNavigate }) => {
 
         {/* Demo URL Example */}
         <div className="max-w-2xl mx-auto mb-12 sm:mb-16 px-2 xs:px-4">
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 xs:p-4 sm:p-6 shadow-sm">
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300 mb-3 font-medium">
+          <div className="bg-gray-800 border border-gray-700 rounded-xl p-3 xs:p-4 sm:p-6 shadow-sm">
+            <p className="text-xs sm:text-sm text-gray-300 mb-3 font-medium">
               Try with this example repository:
             </p>
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-2 xs:p-3 sm:p-4 font-mono text-xs sm:text-sm text-gray-700 dark:text-gray-200 border dark:border-gray-700 break-all">
+            <div className="bg-gray-900 rounded-lg p-2 xs:p-3 sm:p-4 font-mono text-xs sm:text-sm text-gray-200 border-gray-700 break-all">
               https://github.com/username/awesome-project
             </div>
           </div>
@@ -114,10 +114,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ handleNavigate }) => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 xs:gap-4 sm:gap-8 max-w-4xl mx-auto px-2">
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
-              <div className="text-lg xs:text-xl sm:text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+              <div className="text-lg xs:text-xl sm:text-2xl lg:text-3xl font-bold text-blue-400 mb-1">
                 {stat.number}
               </div>
-              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+              <div className="text-xs sm:text-sm text-gray-300">
                 {stat.label}
               </div>
             </div>

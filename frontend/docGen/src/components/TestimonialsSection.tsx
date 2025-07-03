@@ -33,14 +33,14 @@ const TestimonialsSection: React.FC = () => {
   return (
     <section
       id="testimonials"
-      className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900"
+      className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gray-900"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-white">
             Trusted by Developers Worldwide
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
+          <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto px-4">
             See what developers are saying about DocGen
           </p>
         </div>
@@ -49,7 +49,7 @@ const TestimonialsSection: React.FC = () => {
           {testimonials.map((testimonial, index) => (
             <SpotlightCard
               key={index}
-              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+              className="bg-gray-800 border border-gray-700 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
               spotlightColor="rgba(0, 229, 255, 0.2)"
             >
               <div className="flex items-center mb-3 sm:mb-4">
@@ -59,15 +59,15 @@ const TestimonialsSection: React.FC = () => {
                   className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mr-3 sm:mr-4"
                 />
                 <div>
-                  <h4 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white">
+                  <h4 className="font-semibold text-sm sm:text-base text-white">
                     {testimonial.name}
                   </h4>
-                  <p className="text-blue-600 dark:text-blue-400 text-xs sm:text-sm font-medium">
+                  <p className="text-blue-400 text-xs sm:text-sm font-medium">
                     {testimonial.role}
                   </p>
                 </div>
               </div>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed mb-3 sm:mb-4">
+              <p className="text-sm sm:text-base text-gray-300 leading-relaxed mb-3 sm:mb-4">
                 "{testimonial.content}"
               </p>
               <div className="flex text-yellow-400">
