@@ -32,7 +32,7 @@ const HowItWorksSection: React.FC = () => {
   return (
     <section
       id="how-it-works"
-      className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-cyan-50 via-blue-50 to-white dark:from-gray-900 dark:via-blue-900/40 dark:to-gray-800"
+      className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-blue-900/40 to-gray-800"
     >
       <div className="max-w-5xl mx-auto">
         <div className="bg-gradient-to-br from-cyan-900/60 via-blue-900/40 to-gray-900/80 rounded-2xl sm:rounded-3xl shadow-2xl border border-cyan-500/20 p-6 sm:p-8 lg:p-10">

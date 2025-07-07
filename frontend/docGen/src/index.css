@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:where(.dark, .dark *));
 @theme{
   --breakpoint-*:initial;
   --breakpoint-xs:300px;
@@ -15,7 +15,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background: linear-gradient(to bottom, #eff6ff 0%, #ffffff 100%);
+  background: #101828;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
